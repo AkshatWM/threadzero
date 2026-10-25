@@ -1,0 +1,9 @@
+# Ignore uploaded user images (keep the folder using .gitkeep)
+assets/uploads/*
+!assets/uploads/.gitkeep
+
+# Ignore OS & Editor junk
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
