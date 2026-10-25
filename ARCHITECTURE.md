@@ -44,42 +44,7 @@ Designed to allow open discussion while preventing anonymous harassment in the c
 
 ---
 
-## 3. Directory Layout
-
-```text
-threadzero/
-│
-├── assets/                     # FRONTEND WORKSPACE
-│   ├── css/
-│   │   └── style.css           # Shared stylesheet (Light & Dark CSS variables)
-│   ├── js/
-│   │   └── app.js              # Theme toggle, >>quote click helper, form checks
-│   └── uploads/                # Stores uploaded thread images (keep .gitkeep)
-│
-├── config/                     # BACKEND CORE (Included on every page)
-│   ├── db.php                  # PDO connection + session_start()
-│   └── functions.php           # Shared helpers (renderAuthorBadge, formatPostBody)
-│
-├── includes/                   # REUSABLE HTML PARTIALS
-│   ├── header.php              # Common <head>, top navbar, board links, theme toggle
-│   └── footer.php              # Common footer + <script src="assets/js/app.js">
-│
-├── sql/                        # DATABASE WORKSPACE
-│   ├── schema.sql              # The 4 CREATE TABLE statements
-│   └── seed.sql                # Sample boards, demo users, and starter threads
-│
-├── index.php                   # Module 2: Board feed, Search/Sort bar, New Thread form
-├── thread.php                  # Module 3: Single thread view, Replies, Bump/Sage, Edit/Delete
-├── auth.php                    # Module 1: Standard Login/Signup + 16-Digit Token Generator
-├── profile.php                 # Module 4: Edit Bio, Personal Post History, Bookmarks
-├── admin.php                   # Module 5: Report handler + Moderator Table (Pin/Lock/Delete)
-│
-├── .gitignore                  # Ignores assets/uploads/* and editor temp files
-├── ARCHITECTURE.md             # This guide (for teammates & AI coding assistants)
-└── README.md                   # Public GitHub overview, setup steps & screenshots
-```
-
-## 4. Official 4-Table Database Schema (`sql/schema.sql`)
+## 3. Official 4-Table Database Schema (`sql/schema.sql`)
 
 All team members and AI tools must strictly use this 4-table schema:
 
@@ -148,7 +113,7 @@ INSERT INTO boards (slug, title, description) VALUES
 
 ---
 
-## 5. Core Shared Code (`config/db.php` & `config/functions.php`)
+## 4. Core Shared Code (`config/db.php` & `config/functions.php`)
 
 Every root page (`index.php`, `thread.php`, `auth.php`, `profile.php`, `admin.php`) includes these two files at the top:
 
@@ -211,7 +176,7 @@ function formatPostBody($text) {$safe = htmlspecialchars($text, ENT_QUOTES, 'UTF
 
 ---
 
-## 6. Modular Feature Specifications
+## 5. Modular Feature Specifications
 
 Any developer can pick up and build one of these self-contained modules:
 
@@ -248,7 +213,7 @@ Any developer can pick up and build one of these self-contained modules:
 
 ---
 
-## 7. Team Viva Preparation Checklist (By Role)
+## 6. Team Viva Preparation Checklist (By Role)
 
 ### A. Frontend Developers (2 Members — `style.css`, `app.js`, `header.php`)
 
@@ -267,7 +232,7 @@ Any developer can pick up and build one of these self-contained modules:
 
 ---
 
-## 8. Copy-Paste Prompt for Teammates Using AI
+## 7. Copy-Paste Prompt for Teammates Using AI
 
 When you want an AI assistant (ChatGPT, Claude, Gemini, Cursor) to write or modify your assigned file, copy this entire `ARCHITECTURE.md` file into the chat and add this prompt at the bottom:
 
