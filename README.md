@@ -27,12 +27,12 @@
 
 ## 🛠️ Tech Stack
 
-| Layer | Technology |
-| :--- | :--- |
-| **Frontend** | HTML5, Tailwind CSS (utility classes) + custom theme CSS, Vanilla JavaScript |
-| **Backend** | PHP 8.x (Procedural + PDO Prepared Statements, Native Sessions) |
-| **Database** | MySQL / MariaDB (4 Normalized Tables with `ON DELETE CASCADE`) |
-| **Server Environment** | Apache + MySQL (XAMPP / WAMP / LAMP) |
+| Layer                  | Technology                                                                   |
+| :--------------------- | :--------------------------------------------------------------------------- |
+| **Frontend**           | HTML5, Tailwind CSS (utility classes) + custom theme CSS, Vanilla JavaScript |
+| **Backend**            | PHP 8.x (Procedural + PDO Prepared Statements, Native Sessions)              |
+| **Database**           | MySQL / MariaDB (4 Normalized Tables with `ON DELETE CASCADE`)               |
+| **Server Environment** | Apache + MySQL (XAMPP / WAMP / LAMP)                                         |
 
 ---
 
@@ -60,7 +60,7 @@ threadzero/
 ├── admin.php                # Moderator dashboard (Pin, Lock, Delete)
 ├── ARCHITECTURE.md          # Full technical spec for devs & AI assistants
 ├── README.md                # Project overview & setup instructions
-└── PROGRESS.md              # Live build tracker & module completion log        
+└── PROGRESS.md              # Live build tracker & module completion log
 
 ```
 
@@ -69,25 +69,25 @@ threadzero/
 ## 🚀 Local Setup (XAMPP)
 
 1. **Clone the repository into your XAMPP `htdocs` folder:**
+
 ```bash
 cd C:/xampp/htdocs
 git clone https://github.com/<your-username>/threadzero.git
 
 ```
 
-
 2. **Start Apache & MySQL:**
-Open the **XAMPP Control Panel** and start both **Apache** and **MySQL**.
+   Open the **XAMPP Control Panel** and start both **Apache** and **MySQL**.
 3. **Import the Database Schema:**
-* Open [`http://localhost/phpmyadmin`](http://localhost/phpmyadmin) in your browser.
-* Click the **Import** tab (or **SQL** tab) and run [`sql/schema.sql`](https://www.google.com/search?q=./sql/schema.sql) to create the `threadzero` database and default boards.
-* *(Optional)* Run [`sql/seed.sql`](https://www.google.com/search?q=./sql/seed.sql) to populate demo accounts and sample threads.
 
+- Open [`http://localhost/phpmyadmin`](http://localhost/phpmyadmin) in your browser.
+- Click the **Import** tab (or **SQL** tab) and run [`sql/schema.sql`](https://www.google.com/search?q=./sql/schema.sql) to create the `threadzero` database and default boards.
+- _(Optional)_ Run [`sql/seed.sql`](https://www.google.com/search?q=./sql/seed.sql) to populate demo accounts and sample threads.
 
 4. **Configure Database Credentials (if needed):**
-By default, [`config/db.php`](https://www.google.com/search?q=./config/db.php) uses standard XAMPP credentials (`host=localhost`, `user=root`, `pass=""`). Update if your local MySQL uses a custom password.
+   By default, [`config/db.php`](https://www.google.com/search?q=./config/db.php) uses standard XAMPP credentials (`host=localhost`, `user=root`, `pass=""`). Update if your local MySQL uses a custom password.
 5. **Launch the App:**
-Visit [`http://localhost/threadzero/`](http://localhost/threadzero/) in your browser.
+   Visit [`http://localhost/threadzero/`](http://localhost/threadzero/) in your browser.
 
 > **Styling note:** Tailwind is loaded via the Play CDN for simplicity, so no `npm install` or build step is required. Custom theme variables and post styling live in `assets/css/style.css`.
 
@@ -95,17 +95,17 @@ Visit [`http://localhost/threadzero/`](http://localhost/threadzero/) in your bro
 
 ## 📋 Development Roadmap
 
-* [x] Architecture & 4-Table Schema Design (`ARCHITECTURE.md`)
-* [ ] Database Files: `sql/schema.sql` + `sql/seed.sql`
-* [ ] Core Config & Shared UI Partials (`config/`, `includes/`, `assets/css/style.css`)
-* [ ] Module 1: Dual Authentication & 16-Digit Token Generator (`auth.php`)
-* [ ] Module 2: Board Feed, Search & Thread Creation (`index.php`)
-* [ ] Module 3: Thread Replies, Asymmetric Anonymity & Bump/Sage (`thread.php`)
-* [ ] Module 4: User Profile & Bookmarks (`profile.php`)
-* [ ] Module 5: Moderation & Reporting Dashboard (`admin.php`)
+- [x] Architecture & 4-Table Schema Design (`ARCHITECTURE.md`)
+- [ ] Database Files: `sql/schema.sql` + `sql/seed.sql`
+- [ ] Core Config & Shared UI Partials (`config/`, `includes/`, `assets/css/style.css`)
+- [ ] Module 1: Dual Authentication & 16-Digit Token Generator (`auth.php`)
+- [ ] Module 2: Board Feed, Search & Thread Creation (`index.php`)
+- [ ] Module 3: Thread Replies, Asymmetric Anonymity & Bump/Sage (`thread.php`)
+- [ ] Module 4: User Profile & Bookmarks (`profile.php`)
+- [ ] Module 5: Moderation & Reporting Dashboard (`admin.php`)
 
 ---
 
 ## 🤝 Contributing (For Team Members)
 
-Before editing or generating code for any module, please read [`ARCHITECTURE.md`](https://www.google.com/search?q=./ARCHITECTURE.md) to ensure all SQL queries, CSS class names, and helper functions stay consistent across the project.
+Before editing or generating code for any module, please read [`ARCHITECTURE.md`](./ARCHITECTURE.md) to ensure all SQL queries, CSS class names, and helper functions stay consistent across the project.
