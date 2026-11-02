@@ -1,0 +1,382 @@
+/* Homepage */
+
+.home-page {
+    margin: 0;
+    background-color: #f4f1e8;
+    font-family: Arial, sans-serif;
+    color: #263b32;
+}
+
+.home-header {
+    background-color: #183d30;
+    color: white;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.home-header nav a {
+    color: white;
+    text-decoration: none;
+    margin: 8px;
+}
+
+.home-header nav a:hover {
+    text-decoration: underline;
+}
+
+.welcome-box {
+    background-color: #183d30;
+    color: white;
+    text-align: center;
+    padding: 50px 20px;
+}
+
+.home-button {
+    display: inline-block;
+    background-color: white;
+    color: #183d30;
+    padding: 12px 20px;
+    margin-top: 15px;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.home-content {
+    width: 900px;
+    max-width: 90%;
+    margin: 30px auto;
+}
+
+.board-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.board-box {
+    background-color: white;
+    padding: 20px;
+    flex: 1;
+    min-width: 180px;
+    border-radius: 8px;
+}
+
+.board-box a,
+.recent-box a {
+    color: #183d30;
+    font-weight: bold;
+}
+
+.recent-box {
+    background-color: white;
+    padding: 20px;
+    margin: 15px 0;
+    border-radius: 8px;
+}
+
+.home-footer {
+    text-align: center;
+    padding: 20px;
+}
+
+
+
+
+
+/* Login Page */
+
+.login-page {
+    margin: 0;
+    min-height: 100vh;
+    background-color: #f4f1e8;
+    font-family: Arial, sans-serif;
+    color: #263b32;
+}
+
+.login-header {
+    background-color: #183d30;
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.login-logo {
+    color: white;
+    font-size: 25px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.back-home {
+    color: white;
+    text-decoration: none;
+}
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 20px;
+}
+
+.login-card {
+    background-color: white;
+    width: 100%;
+    max-width: 400px;
+    padding: 35px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.login-card h1 {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.login-subtitle {
+    text-align: center;
+    color: #666;
+    margin-bottom: 30px;
+}
+
+.login-card label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.login-card input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
+.login-button {
+    width: 100%;
+    padding: 12px;
+    background-color: #183d30;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.login-button:hover {
+    background-color: #285744;
+}
+
+.register-text {
+    text-align: center;
+    margin-top: 25px;
+}
+
+.register-text a {
+    color: #183d30;
+    font-weight: bold;
+}
+
+.login-footer {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+}
+
+
+
+/* Registration Page */
+
+.register-page {
+    margin: 0;
+    background-color: #f4f1e8;
+    font-family: Arial, sans-serif;
+    color: #263b32;
+}
+
+.register-header {
+    background-color: #183d30;
+    color: white;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.register-header a {
+    color: white;
+}
+
+.register-box {
+    background-color: white;
+    width: 350px;
+    margin: 40px auto;
+    padding: 25px;
+    border-radius: 10px;
+}
+
+.register-box h1,
+.register-box p {
+    text-align: center;
+}
+
+.register-box label {
+    display: block;
+    margin-top: 15px;
+}
+
+.register-box input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    box-sizing: border-box;
+}
+
+.register-box button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 20px;
+    background-color: #183d30;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.register-box button:hover {
+    background-color: #285744;
+}
+
+.register-footer {
+    text-align: center;
+}
+
+
+
+
+/* Thread Page */
+
+.thread-page {
+    margin: 0;
+    background-color: #f4f1e8;
+    font-family: Arial, sans-serif;
+    color: #263b32;
+}
+
+.thread-header {
+    background-color: #183d30;
+    color: white;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.thread-header a {
+    color: white;
+}
+
+.thread-box {
+    background-color: white;
+    width: 700px;
+    max-width: 90%;
+    margin: 30px auto;
+    padding: 25px;
+    border-radius: 10px;
+}
+
+.thread-info {
+    color: gray;
+    font-size: 14px;
+}
+
+.reply-box {
+    background-color: #f4f1e8;
+    padding: 10px;
+    margin: 15px 0;
+    border-radius: 5px;
+}
+
+.thread-box textarea {
+    width: 100%;
+    height: 100px;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.thread-box button {
+    background-color: #183d30;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.thread-footer {
+    text-align: center;
+    padding: 20px;
+}
+
+
+
+
+
+/* Profile Page */
+
+.profile-page {
+    margin: 0;
+    background-color: #f4f1e8;
+    font-family: Arial, sans-serif;
+    color: #263b32;
+}
+
+.profile-header {
+    background-color: #183d30;
+    color: white;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.profile-header a {
+    color: white;
+}
+
+.profile-box {
+    background-color: white;
+    width: 700px;
+    max-width: 90%;
+    margin: 30px auto;
+    padding: 25px;
+    border-radius: 10px;
+}
+
+.user-info {
+    background-color: #f4f1e8;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.profile-post {
+    background-color: #f4f1e8;
+    padding: 15px;
+    margin: 15px 0;
+    border-radius: 8px;
+}
+
+.profile-post a {
+    color: #183d30;
+    font-weight: bold;
+}
+
+.profile-footer {
+    text-align: center;
+    padding: 20px;
+}
