@@ -16,7 +16,7 @@
         <a href="index.html">Home</a>
     </header>
 
-    <div class="thread-box">
+    <main class="thread-box">
 
         <h1>Is Artificial Intelligence helpful?</h1>
 
@@ -32,6 +32,7 @@
 
         <hr>
 
+        <!-- Replies Section -->
         <h2>Replies</h2>
 
         <div class="reply-box">
@@ -48,15 +49,37 @@
             </p>
         </div>
 
+        <!-- Write a Reply -->
         <h2>Write a Reply</h2>
 
-        <form>
-            <textarea placeholder="Write your reply here..." required></textarea>
+        <form method="POST">
 
-            <button type="submit">Post Reply</button>
+            <label for="content">Your Reply</label>
+
+            <textarea
+                id="content"
+                name="content"
+                placeholder="Write your reply here..."
+                required
+            ></textarea>
+
+            <!-- Sage Checkbox -->
+            <label>
+                <input
+                    type="checkbox"
+                    name="sage"
+                    value="1"
+                >
+                Sage (Do not bump this thread)
+            </label>
+
+            <button type="submit">
+                Post Reply
+            </button>
+
         </form>
 
-    </div>
+    </main>
 
     <footer class="thread-footer">
         © 2026 ThreadZero
