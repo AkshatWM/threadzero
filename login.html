@@ -32,12 +32,17 @@
 
                 <form method="POST">
 
+                    <input type="hidden" name="action" value="login">
+
                     <label for="username">Username</label>
                     <input
                         type="text"
                         id="username"
                         name="username"
                         placeholder="Enter your username"
+                        minlength="3"
+                        maxlength="20"
+                        autocomplete="username"
                         required
                     >
 
@@ -47,6 +52,9 @@
                         id="password"
                         name="password"
                         placeholder="Enter your password"
+                        minlength="8"
+                        maxlength="255"
+                        autocomplete="current-password"
                         required
                     >
 
@@ -69,6 +77,8 @@
 
                 <form method="POST">
 
+                    <input type="hidden" name="action" value="token_login">
+
                     <label for="token">16-Digit Token</label>
 
                     <input
@@ -78,6 +88,7 @@
                         placeholder="4829-1049-8372-6154"
                         inputmode="text"
                         maxlength="19"
+                        autocomplete="one-time-code"
                         title="Enter your 16-digit token, with or without hyphens"
                         required
                     >

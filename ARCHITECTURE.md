@@ -16,7 +16,7 @@ Whether a human teammate or an AI agent writes code for this repository, it **MU
    - Write **flat, top-to-bottom procedural PHP** and **plain Vanilla JS** with self-explanatory variable names (`$thread_id`, `$is_anon`, `$search_query`).
    - Write every SQL query string directly above the `$pdo->prepare()` line where it runs.
 2. **Strict Tech Stack:**
-   - **Frontend:** Semantic HTML5, **Tailwind CSS** (utility classes for layout/spacing; loaded via CDN or compiled into `assets/css/style.css`) plus a small custom stylesheet for theme variables (`.greentext`, badges, post cards). **Vanilla JavaScript** (ES6 DOM manipulation). No React/Vue/Bootstrap.
+   - **Frontend:** Semantic HTML5 and **one hand-written stylesheet** (`assets/css/style.css`) built with Flexbox and media queries; Module 6 adds CSS variables for the light/dark theme. **Vanilla JavaScript** (ES6 DOM manipulation). No Tailwind, Bootstrap, React or Vue, and no CSS/JS build step.
    - **Backend:** PHP 8.x using `PDO` prepared statements (`?` placeholders) and native `$_SESSION`.
    - **Database:** MySQL / MariaDB (Strictly **4 normalized tables**: `users`, `boards`, `posts`, `bookmarks`).
 3. **Viva-Ready Comments:**
@@ -41,6 +41,26 @@ Designed to allow open discussion while preventing anonymous harassment in the c
 ### C. Imageboard Mechanics (`thread.php` & `assets/js/app.js`)
 - **Bump vs. Sage:** Posting a reply updates the parent thread's `bumped_at = NOW()` so active discussions rise to the top—unless the user checks `Sage (Do not bump)`.
 - **Text Formatting:** Lines starting with `>` render in green (`.greentext`). Typing `>>1002` creates a clickable link (`#p1002`) that jumps to post `#1002`.
+
+### D. Static Frontend Prototype (`*.html` + `assets/css/style.css`)
+The repository now contains five static design pages merged from the frontend PR:
+
+| Prototype | Becomes |
+|---|---|
+| `index.html` | `index.php` |
+| `login.html` | `auth.php` (login mode) |
+| `register.html` | `auth.php` (signup + token mode) |
+| `thread.html` | `thread.php` |
+| `profile.html` | `profile.php` |
+
+These `.html` files are **design references, not production routes**. They share `assets/css/style.css` and already use the final class names (`.badge-anon`, `.badge-user`, `.greentext`, `.quote-link`, `.thread-post`, `.reply-box`). When a page is converted to PHP, keep the same markup and class names, then replace the hard-coded sample content with database queries.
+
+Rules for converting a prototype:
+1. Copy the markup into the `.php` file and include `config/db.php`, `config/functions.php`, `includes/header.php`, `includes/footer.php`.
+2. Keep the visible design, but replace every static post, user and board with `htmlspecialchars()` output from PDO queries.
+3. Add a hidden `action` input to every `POST` form (values in §4.1) and a `csrf_field()` call.
+4. Do not add a second stylesheet or a framework; extend `assets/css/style.css` instead.
+5. `admin.php` has no static prototype yet — build it from the Module 5 spec.
 
 ---
 
@@ -131,7 +151,7 @@ These rules protect the token-login and anonymity model. Do not skip them "to sa
 
 ## 4. Core Shared Code (`config/db.php` & `config/functions.php`)
 
-Every root page (`index.php`, `thread.php`, `auth.php`, `profile.php`, `admin.php`) includes these two files at the top:
+Every root page (`index.php`, `thread.php`, `auth.php`, `profile.php`, `admin.php`) includes these two files at the top. The static `.html` prototypes do not — they are design references only.
 
 ### `config/db.php`
 
@@ -145,8 +165,10 @@ session_start();
 // Change this for any real deployment and never commit the real value publicly.
 define('APP_SECRET', 'threadzero-dev-secret-change-me');
 
-$host = 'localhost';$dbname = 'threadzero';
-$db_user = 'root';$db_pass = ''; // Default XAMPP password is empty
+$host = 'localhost';
+$dbname = 'threadzero';
+$db_user = 'root';
+$db_pass = ''; // Default XAMPP password is empty
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $db_user,$db_pass, [
@@ -169,17 +191,36 @@ function isLoggedIn() {
 }
 
 function isMod() {
-    return isset($_SESSION['role']) &&$_SESSION['role'] === 'mod';
+    return isset($_SESSION['role']) && $_SESSION['role'] === 'mod';
+}
+
+// Creates (once per session) and returns the CSRF token
+function csrf_token() {
+    if (empty($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+    return $_SESSION['csrf_token'];
+}
+
+// Prints the hidden input that every POST form must contain
+function csrf_field() {
+    return '<input type="hidden" name="csrf_token" value="' . htmlspecialchars(csrf_token()) . '">';
+}
+
+// Returns true only when the posted token matches the session token
+function csrf_verify() {
+    return isset($_POST['csrf_token'], $_SESSION['csrf_token'])
+        && hash_equals($_SESSION['csrf_token'], $_POST['csrf_token']);
 }
 
 // Decides whether to show "Anonymous [OP]" or "@username"
-function renderAuthorBadge($post,$parentThread = null) {
+function renderAuthorBadge($post, $parentThread = null) {
     // 1. Main thread with "Post Anonymously" checked
     if ($post['parent_id'] === null && (int)$post['is_anon'] === 1) {
         return '<span class="badge-anon">Anonymous [OP]</span>';
     }
     // 2. Reply written by the creator of an anonymous thread
-    if ($post['parent_id'] !== null &&$parentThread !== null) {
+    if ($post['parent_id'] !== null && $parentThread !== null) {
         if ((int)$parentThread['is_anon'] === 1 && (int)$post['user_id'] === (int)$parentThread['user_id']) {
             return '<span class="badge-anon">Anonymous [OP]</span>';
         }
@@ -189,12 +230,52 @@ function renderAuthorBadge($post,$parentThread = null) {
 }
 
 // Formats >greentext and >>1001 quote links
-function formatPostBody($text) {$safe = htmlspecialchars($text, ENT_QUOTES, 'UTF-8');$safe = preg_replace('/&gt;&gt;(\d+)/', '<a href="#p$1" class="quote-link">&gt;&gt;$1</a>',$safe);
-    $safe = preg_replace('/^(&gt;.*)$/m', '<span class="greentext">$1</span>',$safe);
+function formatPostBody($text) {
+    $safe = htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
+    $safe = preg_replace('/&gt;&gt;(\d+)/', '<a href="#p$1" class="quote-link">&gt;&gt;$1</a>', $safe);
+    $safe = preg_replace('/^(&gt;.*)$/m', '<span class="greentext">$1</span>', $safe);
     return nl2br($safe);
 }
 ?>
 ```
+
+### 4.1 Form Fields, Session Keys & Redirect Rules
+
+The static prototypes already use these names. Do not invent new ones; the PHP pages must match them exactly.
+
+**POST field names (hidden `action` decides the handler):**
+
+| Form | `action` value | Other fields |
+|---|---|---|
+| Standard signup | `signup` | `username`, `password`, `confirm_password` |
+| Standard login | `login` | `username`, `password` |
+| Token signup | `token_signup` | none (server generates the token) |
+| Token login | `token_login` | `token` (16 digits, hyphens/spaces allowed in input) |
+| Logout | `logout` | none |
+| Create thread | `create_thread` | `board_id`, `title`, `content`, `is_anon`, `image` (optional file) |
+| Reply | `reply` | `content`, `sage` |
+| Update bio | `update_bio` | `bio` |
+| Remove bookmark | `remove_bookmark` | `post_id` |
+| Report post | `report` | `post_id` |
+| Moderation | `unflag`, `pin`, `lock`, `delete` | `post_id` |
+
+**GET field names:** `search`, `sort` (`bumped` or `newest`), `board` (slug), `page` (future).
+
+**Session keys:** `user_id`, `username`, `role`, `csrf_token`, `failed_logins`. Clear the whole session with `session_unset()` + `session_destroy()` on logout, then `session_regenerate_id(true)`.
+
+**Redirect rules:**
+- Successful standard login or signup → `index.php` (POST → redirect → GET).
+- Successful logout → `index.php`.
+- Token signup is the one exception: render `auth.php` directly from the POST response with the token shown once and a link to the login form. Never redirect with the token in the URL.
+- Validation or login failure → re-render the same form with `$error` and HTTP 200; never redirect with the error in the URL.
+- `auth.php` handles both login and signup modes; `login.html`/`register.html` are only the visual reference.
+
+**Validation limits (enforce server-side and mirror in HTML):**
+- `username`: 3–20 characters, letters/digits/underscore only, unique.
+- `password`: minimum 8 characters; `confirm_password` must match.
+- `token`: strip everything except digits, then require exactly 16 digits.
+- `title`: 3–150 characters. `content`: 1–5,000 characters. `bio`: maximum 255 characters.
+- `image`: optional; JPG/PNG/GIF/WebP, maximum 2 MB, stored in `assets/uploads/` with a random filename.
 
 ---
 
@@ -207,11 +288,12 @@ Any developer can pick up and build one of these self-contained modules:
 * **Mullvad Token Generator:** Builds `$token = sprintf('%04d-%04d-%04d-%04d', random_int(0,9999), random_int(0,9999), random_int(0,9999), random_int(0,9999));`, then `$lookup = hash_hmac('sha256', $token, APP_SECRET)` and `$token_hash = password_hash($token, PASSWORD_DEFAULT)`. Inserts the handle (`Vault#` + last 4 digits, with a random suffix if taken), `password_hash = $token_hash`, and `token_lookup = $lookup`. The plaintext token is displayed **once** with a copy button and a warning to save it.
 * **Token Login:** Normalises the input (strip spaces and dashes), validates it is 16 digits, runs `SELECT * FROM users WHERE token_lookup = ?`, then verifies with `password_verify($token, $row['password_hash'])`. On success: `session_regenerate_id(true)`, set `$_SESSION['user_id']` and `$_SESSION['role']`.
 * **Login hardening:** Generic error message for both flows, and a `sleep(1)` delay after repeated failures in the same session.
+* **Form contract:** one `auth.php` page serves four `action` values — `signup` (`username`, `password`, `confirm_password`), `login` (`username`, `password`), `token_signup` (no fields), and `token_login` (`token`). The static `login.html` and `register.html` show the exact layout and field names.
 
 
 * **Module 2: `index.php` (Board Feed, Search & New Thread)**
 * Displays boards from `boards` table, a keyword search input (`WHERE p.content LIKE ? OR p.title LIKE ?`), and a sort dropdown (`bumped_at DESC`, `created_at DESC`).
-* Includes the "New Thread" form (`title`, `content`, optional image upload to `assets/uploads/`, and `is_anon` checkbox).
+* Includes the "New Thread" form (`board_id`, `title`, `content`, optional image upload to `assets/uploads/`, and `is_anon` checkbox).
 * Counts replies per thread dynamically or via subquery and lists threads ordered by `is_pinned DESC, bumped_at DESC`.
 
 
@@ -240,8 +322,8 @@ Any developer can pick up and build one of these self-contained modules:
 
 ### A. Frontend Developers (2 Members — `assets/css/style.css`, `assets/js/app.js`, `includes/header.php`)
 
-* **Know how to explain:** Tailwind utility classes vs. your custom CSS variables (`--bg`, `--card-bg`), how `localStorage.getItem('theme')` switches Dark/Retro mode, HTML form `method="POST"` and `enctype="multipart/form-data"`, and the `quotePost(id)` JS function that inserts `>>1001` into the reply box.
-* **Practice live changes:** Changing theme colors, adding a minimum character length check in JS, or adding a `confirm()` dialog on delete buttons.
+* **Know how to explain:** How `assets/css/style.css` is organised (one commented section per page plus shared `.badge-anon`, `.badge-user`, `.greentext` and `.quote-link` helpers), Flexbox layout, the mobile `@media (max-width: 600px)` block, HTML form `method="POST"` and `enctype="multipart/form-data"`, and how each `.html` prototype maps to its `.php` page.
+* **Practice live changes:** Change a theme colour, move the navbar, add a minimum character length check in JS, or add a `confirm()` dialog on delete buttons.
 
 ### B. Backend Developers (2 Members — `auth.php`, `index.php`, `thread.php`, `profile.php`, `admin.php`)
 
@@ -259,4 +341,4 @@ Any developer can pick up and build one of these self-contained modules:
 
 When you want an AI assistant (ChatGPT, Claude, Gemini, Cursor) to write or modify your assigned file, copy this entire `ARCHITECTURE.md` file into the chat and add this prompt at the bottom:
 
-> "Act as a helpful developer following the `ARCHITECTURE.md` specification above. Write the complete, self-contained code for `[INSERT FILENAME, e.g., profile.php]`. Follow all rules in Section 1: use flat procedural PHP with PDO prepared statements, Tailwind utility classes plus the custom theme CSS, and clear comments above every SQL query (`SELECT`, `INSERT`, `UPDATE`, `DELETE`) so I can easily explain and modify the code during my college viva."
+> "Act as a helpful developer following the `ARCHITECTURE.md` specification above. Write the complete, self-contained code for `[INSERT FILENAME, e.g., profile.php]`. Follow all rules in Section 1: use flat procedural PHP with PDO prepared statements, the existing classes from `assets/css/style.css` (no CSS framework), and clear comments above every SQL query (`SELECT`, `INSERT`, `UPDATE`, `DELETE`) so I can easily explain and modify the code during my college viva."

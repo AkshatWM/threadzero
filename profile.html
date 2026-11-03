@@ -14,7 +14,13 @@
     <!-- Header -->
     <header class="profile-header">
         <h2>ThreadZero</h2>
-        <a href="index.html">Home</a>
+        <nav class="profile-nav">
+            <a href="index.html">Home</a>
+            <form method="POST" action="" class="logout-form">
+                <input type="hidden" name="action" value="logout">
+                <button type="submit" class="logout-link">Logout</button>
+            </form>
+        </nav>
     </header>
 
     <main class="profile-box">
@@ -37,12 +43,15 @@
 
             <form method="POST" action="">
 
+                <input type="hidden" name="action" value="update_bio">
+
                 <label for="bio">Update your biography:</label>
 
                 <textarea
                     id="bio"
                     name="bio"
                     rows="5"
+                    maxlength="255"
                     placeholder="Write something about yourself..."
                     required
                 >I enjoy sharing ideas and discussing different topics with the community.</textarea>
@@ -100,8 +109,8 @@
 
                     <input
                         type="hidden"
-                        name="bookmark_title"
-                        value="Is Artificial Intelligence helpful?"
+                        name="post_id"
+                        value="1001"
                     >
 
                     <button type="submit" class="profile-button">
@@ -128,8 +137,8 @@
 
                     <input
                         type="hidden"
-                        name="bookmark_title"
-                        value="How can students improve learning?"
+                        name="post_id"
+                        value="1002"
                     >
 
                     <button type="submit" class="profile-button">

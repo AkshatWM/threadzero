@@ -94,11 +94,19 @@
 }
 
 .recent-box form input[type="text"],
+.recent-box form select,
 .recent-box form textarea {
     width: 100%;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+.recent-box form input[type="file"] {
+    width: 100%;
+    padding: 8px 0;
     box-sizing: border-box;
     font-family: Arial, sans-serif;
 }
@@ -368,6 +376,40 @@
 }
 
 
+/* One-time token reveal (shown after token signup) */
+
+.token-reveal {
+    background-color: #e5f0e9;
+    border: 2px dashed #183d30;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 25px;
+    text-align: center;
+}
+
+.token-warning {
+    color: #8a3b12;
+    font-weight: bold;
+}
+
+.token-value {
+    background-color: #183d30;
+    color: white;
+    font-family: Consolas, monospace;
+    font-size: 20px;
+    letter-spacing: 2px;
+    padding: 12px;
+    border-radius: 6px;
+    margin: 15px 0;
+}
+
+.token-reveal .home-button {
+    background-color: #183d30;
+    color: white;
+    margin-top: 10px;
+}
+
+
 /* =================================
    THREAD PAGE
 ================================= */
@@ -488,6 +530,26 @@
 
 .profile-header a {
     color: white;
+}
+
+.profile-nav {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logout-form {
+    margin: 0;
+}
+
+.logout-link {
+    background: none;
+    border: none;
+    color: white;
+    font: inherit;
+    cursor: pointer;
+    padding: 0;
+    text-decoration: underline;
 }
 
 .profile-box {

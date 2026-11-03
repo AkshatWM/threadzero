@@ -75,7 +75,17 @@
         <h2>Create New Thread</h2>
 
         <div class="recent-box">
-            <form method="POST" action="">
+            <form method="POST" action="" enctype="multipart/form-data">
+
+                <input type="hidden" name="action" value="create_thread">
+
+                <label for="board_id">Board</label>
+                <select id="board_id" name="board_id" required>
+                    <option value="1">Technology</option>
+                    <option value="2">Science</option>
+                    <option value="3">Gaming</option>
+                    <option value="4">General</option>
+                </select>
 
                 <label for="title">Thread Title</label>
                 <input
@@ -83,6 +93,8 @@
                     id="title"
                     name="title"
                     placeholder="Enter thread title"
+                    minlength="3"
+                    maxlength="150"
                     required
                 >
 
@@ -91,8 +103,17 @@
                     id="content"
                     name="content"
                     placeholder="Write your thoughts..."
+                    maxlength="5000"
                     required
                 ></textarea>
+
+                <label for="image">Attach Image (optional)</label>
+                <input
+                    type="file"
+                    id="image"
+                    name="image"
+                    accept="image/jpeg,image/png,image/gif,image/webp"
+                >
 
                 <label>
                     <input

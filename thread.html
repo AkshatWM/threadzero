@@ -19,14 +19,14 @@
     <main class="thread-box">
 
         <!-- Main Thread -->
-        <div id="thread-1" class="thread-post">
+        <div id="p1001" class="thread-post">
 
             <h1>Is Artificial Intelligence helpful?</h1>
 
             <p class="thread-info">
-                <span class="badge-anon">Anonymous</span>
+                <span class="badge-anon">Anonymous [OP]</span>
                 | Technology Board
-                | Post #1
+                | Post #1001
             </p>
 
             <p>
@@ -50,11 +50,11 @@
         <!-- Replies Section -->
         <h2>Replies</h2>
 
-        <div class="reply-box" id="reply-1">
+        <div class="reply-box" id="p1002">
 
             <p class="thread-info">
-                <span class="badge-user">User1</span>
-                | Post #2
+                <span class="badge-user">@User1</span>
+                | Post #1002
             </p>
 
             <p>
@@ -70,11 +70,11 @@
 
         </div>
 
-        <div class="reply-box" id="reply-2">
+        <div class="reply-box" id="p1003">
 
             <p class="thread-info">
-                <span class="badge-user">User2</span>
-                | Post #3
+                <span class="badge-user">@User2</span>
+                | Post #1003
             </p>
 
             <p>
@@ -95,12 +95,15 @@
 
         <form method="POST" action="" class="reply-form">
 
+            <input type="hidden" name="action" value="reply">
+
             <label for="content">Your Reply</label>
 
             <textarea
                 id="content"
                 name="content"
                 placeholder="Write your reply here..."
+                maxlength="5000"
                 required
             ></textarea>
 
