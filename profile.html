@@ -11,6 +11,7 @@
 
 <body class="profile-page">
 
+    <!-- Header -->
     <header class="profile-header">
         <h2>ThreadZero</h2>
         <a href="index.html">Home</a>
@@ -20,6 +21,7 @@
 
         <h1>User Profile</h1>
 
+        <!-- User Information -->
         <div class="user-info">
             <h2>Anonymous User</h2>
             <p>Member of ThreadZero</p>
@@ -33,7 +35,7 @@
 
             <h2>About Me</h2>
 
-            <form method="POST">
+            <form method="POST" action="">
 
                 <label for="bio">Update your biography:</label>
 
@@ -74,8 +76,74 @@
 
         </section>
 
+        <hr>
+
+        <!-- Saved Bookmarks Section -->
+        <section class="saved-bookmarks">
+
+            <h2>My Saved Bookmarks</h2>
+
+            <div class="profile-post">
+
+                <h3>Is Artificial Intelligence helpful?</h3>
+
+                <p>Board: Technology</p>
+
+                <a href="thread.html">View Discussion</a>
+
+                <form method="POST" action="">
+                    <input
+                        type="hidden"
+                        name="action"
+                        value="remove_bookmark"
+                    >
+
+                    <input
+                        type="hidden"
+                        name="bookmark_title"
+                        value="Is Artificial Intelligence helpful?"
+                    >
+
+                    <button type="submit" class="profile-button">
+                        Remove Bookmark
+                    </button>
+                </form>
+
+            </div>
+
+            <div class="profile-post">
+
+                <h3>How can students improve learning?</h3>
+
+                <p>Board: General</p>
+
+                <a href="thread.html">View Discussion</a>
+
+                <form method="POST" action="">
+                    <input
+                        type="hidden"
+                        name="action"
+                        value="remove_bookmark"
+                    >
+
+                    <input
+                        type="hidden"
+                        name="bookmark_title"
+                        value="How can students improve learning?"
+                    >
+
+                    <button type="submit" class="profile-button">
+                        Remove Bookmark
+                    </button>
+                </form>
+
+            </div>
+
+        </section>
+
     </main>
 
+    <!-- Footer -->
     <footer class="profile-footer">
         © 2026 ThreadZero
     </footer>
