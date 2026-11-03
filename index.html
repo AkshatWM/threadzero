@@ -75,6 +75,45 @@
 
         </div>
 
+        <!-- Create New Thread -->
+        <h2>Create New Thread</h2>
+
+        <div class="recent-box">
+
+            <form method="POST" action="">
+
+                <label for="title">Thread Title</label>
+                <input
+                    type="text"
+                    id="title"
+                    name="title"
+                    placeholder="Enter thread title"
+                    required
+                >
+
+                <label for="content">Thread Content</label>
+                <textarea
+                    id="content"
+                    name="content"
+                    placeholder="Write your thoughts..."
+                    required
+                ></textarea>
+
+                <label>
+                    <input
+                        type="checkbox"
+                        name="is_anon"
+                        value="1"
+                    >
+                    Post Thread Anonymously
+                </label>
+
+                <button type="submit">Post Thread</button>
+
+            </form>
+
+        </div>
+
         <!-- Recent discussions -->
         <h2>Recent Discussions</h2>
 
