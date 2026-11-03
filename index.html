@@ -13,7 +13,6 @@
 
     <!-- Header -->
     <header class="home-header">
-
         <h2>ThreadZero</h2>
 
         <nav>
@@ -23,12 +22,10 @@
             <a href="login.html">Login</a>
             <a href="register.html">Register</a>
         </nav>
-
     </header>
 
     <!-- Welcome section -->
     <section class="welcome-box">
-
         <h1>Welcome to ThreadZero</h1>
 
         <p>
@@ -39,7 +36,6 @@
         <a href="register.html" class="home-button">
             Join the Community
         </a>
-
     </section>
 
     <!-- Boards section -->
@@ -79,7 +75,6 @@
         <h2>Create New Thread</h2>
 
         <div class="recent-box">
-
             <form method="POST" action="">
 
                 <label for="title">Thread Title</label>
@@ -111,30 +106,48 @@
                 <button type="submit">Post Thread</button>
 
             </form>
-
         </div>
 
         <!-- Recent discussions -->
         <h2>Recent Discussions</h2>
 
+        <!-- Search and Sort Bar -->
         <div class="recent-box">
 
-            <h3>Is Artificial Intelligence helpful?</h3>
+            <form method="GET" action="index.html" class="search-sort">
 
-            <p>Board: Technology</p>
+                <label for="search">Search Discussions</label>
 
-            <a href="thread.html">Read Discussion</a>
+                <input
+                    type="search"
+                    id="search"
+                    name="search"
+                    placeholder="Search discussions..."
+                >
+
+                <label for="sort">Sort Discussions</label>
+
+                <select id="sort" name="sort">
+                    <option value="bumped">Most Bumped</option>
+                    <option value="newest">Newest</option>
+                </select>
+
+                <button type="submit">Search</button>
+
+            </form>
 
         </div>
 
         <div class="recent-box">
-
-            <h3>How can students improve learning?</h3>
-
-            <p>Board: General</p>
-
+            <h3>Is Artificial Intelligence helpful?</h3>
+            <p>Board: Technology</p>
             <a href="thread.html">Read Discussion</a>
+        </div>
 
+        <div class="recent-box">
+            <h3>How can students improve learning?</h3>
+            <p>Board: General</p>
+            <a href="thread.html">Read Discussion</a>
         </div>
 
     </main>
