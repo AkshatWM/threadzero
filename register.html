@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Register - ThreadZero</title>
+
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body class="register-page">
+
+    <!-- Header -->
+    <header class="register-header">
+        <h2>ThreadZero</h2>
+        <a href="index.html">Home</a>
+    </header>
+
+    <main class="register-box">
+
+        <h1>Create Account</h1>
+        <p>Join ThreadZero today!</p>
+
+        <!-- Username and Password Registration -->
+        <section class="register-section">
+
+            <h2>Username Registration</h2>
+
+            <form method="POST" action="">
+
+                <label for="username">Username</label>
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    placeholder="Enter username"
+                    required
+                >
+
+                <label for="password">Password</label>
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Enter password"
+                    required
+                >
+
+                <label for="confirm_password">Confirm Password</label>
+                <input
+                    type="password"
+                    id="confirm_password"
+                    name="confirm_password"
+                    placeholder="Enter password again"
+                    required
+                >
+
+                <button type="submit">
+                    Register
+                </button>
+
+            </form>
+
+        </section>
+
+        <hr>
+
+        <!-- 16-Digit Token Generation -->
+        <section class="token-section">
+
+            <h2>16-Digit Token Registration</h2>
+
+            <p>
+                Generate a unique 16-digit ThreadZero token
+                for your account.
+            </p>
+
+            <form method="POST" action="">
+
+                <button type="submit" name="generate_token" value="1">
+                    Generate 16-Digit Token
+                </button>
+
+            </form>
+
+        </section>
+
+        <p>
+            Already have an account?
+            <a href="login.html">Login</a>
+        </p>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="register-footer">
+        © 2026 ThreadZero
+    </footer>
+
+</body>
+</html>

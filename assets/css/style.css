@@ -1,0 +1,657 @@
+.home-page,
+.login-page,
+.register-page,
+.thread-page,
+.profile-page {
+    margin: 0;
+    background-color: #f4f1e8;
+    font-family: Arial, sans-serif;
+    color: #263b32;
+}
+
+
+/* =================================
+   HOMEPAGE
+================================= */
+
+.home-header {
+    background-color: #183d30;
+    color: white;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.home-header nav a {
+    color: white;
+    text-decoration: none;
+    margin: 8px;
+}
+
+.home-header nav a:hover {
+    text-decoration: underline;
+}
+
+.welcome-box {
+    background-color: #183d30;
+    color: white;
+    text-align: center;
+    padding: 50px 20px;
+}
+
+.home-button {
+    display: inline-block;
+    background-color: white;
+    color: #183d30;
+    padding: 12px 20px;
+    margin-top: 15px;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.home-content {
+    width: 900px;
+    max-width: 90%;
+    margin: 30px auto;
+}
+
+.board-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.board-box {
+    background-color: white;
+    padding: 20px;
+    flex: 1;
+    min-width: 180px;
+    border-radius: 8px;
+}
+
+.board-box a,
+.recent-box a {
+    color: #183d30;
+    font-weight: bold;
+}
+
+.recent-box {
+    background-color: white;
+    padding: 20px;
+    margin: 15px 0;
+    border-radius: 8px;
+}
+
+
+/* Create New Thread Form */
+
+.recent-box form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.recent-box form input[type="text"],
+.recent-box form textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+.recent-box form textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.recent-box form label {
+    font-weight: bold;
+}
+
+.recent-box form input[type="checkbox"] {
+    margin-right: 6px;
+}
+
+.recent-box form button {
+    background-color: #183d30;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.recent-box form button:hover {
+    background-color: #263b32;
+}
+
+
+/* Search and Sort */
+
+.search-sort {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.search-sort input,
+.search-sort select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.search-sort button {
+    background-color: #183d30;
+    color: white;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.search-sort button:hover {
+    background-color: #285744;
+}
+
+.home-footer {
+    text-align: center;
+    padding: 20px;
+}
+
+
+/* =================================
+   LOGIN PAGE
+================================= */
+
+.login-page {
+    min-height: 100vh;
+}
+
+.login-header {
+    background-color: #183d30;
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.login-logo {
+    color: white;
+    font-size: 25px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.back-home {
+    color: white;
+    text-decoration: none;
+}
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 20px;
+}
+
+.login-card {
+    background-color: white;
+    width: 100%;
+    max-width: 400px;
+    padding: 35px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.login-card h1 {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.login-subtitle {
+    text-align: center;
+    color: #666;
+    margin-bottom: 30px;
+}
+
+.login-card label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.login-card input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
+.login-button {
+    width: 100%;
+    padding: 12px;
+    background-color: #183d30;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.login-button:hover {
+    background-color: #285744;
+}
+
+
+/* Login Sections */
+
+.login-section {
+    margin-top: 20px;
+}
+
+.token-section {
+    border-top: 1px solid #ddd;
+    margin-top: 25px;
+    padding-top: 20px;
+}
+
+.token-section input {
+    letter-spacing: 2px;
+}
+
+.register-text {
+    text-align: center;
+    margin-top: 25px;
+}
+
+.register-text a {
+    color: #183d30;
+    font-weight: bold;
+}
+
+.login-footer {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+}
+
+
+/* =================================
+   REGISTRATION PAGE
+================================= */
+
+.register-header {
+    background-color: #183d30;
+    color: white;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.register-header a {
+    color: white;
+}
+
+.register-box {
+    background-color: white;
+    width: 350px;
+    max-width: 85%;
+    margin: 40px auto;
+    padding: 25px;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+
+.register-box h1,
+.register-box p {
+    text-align: center;
+}
+
+.register-box label {
+    display: block;
+    margin-top: 15px;
+}
+
+.register-box input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.register-box button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 20px;
+    background-color: #183d30;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.register-box button:hover {
+    background-color: #285744;
+}
+
+
+/* Registration Token Section */
+
+.register-section {
+    margin-top: 20px;
+}
+
+.register-box .token-section {
+    border-top: 1px solid #ddd;
+    margin-top: 25px;
+    padding-top: 20px;
+}
+
+.register-footer {
+    text-align: center;
+    padding: 20px;
+}
+
+
+/* =================================
+   THREAD PAGE
+================================= */
+
+.thread-header {
+    background-color: #183d30;
+    color: white;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.thread-header a {
+    color: white;
+}
+
+.thread-box {
+    background-color: white;
+    width: 700px;
+    max-width: 90%;
+    margin: 30px auto;
+    padding: 25px;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+
+.thread-info {
+    color: gray;
+    font-size: 14px;
+}
+
+.reply-box {
+    background-color: #f4f1e8;
+    padding: 10px;
+    margin: 15px 0;
+    border-radius: 5px;
+}
+
+
+/* Thread and Reply Actions */
+
+.thread-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin: 12px 0;
+}
+
+.thread-actions a {
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.thread-actions a:hover {
+    text-decoration: underline;
+}
+
+
+/* Reply Form */
+
+.thread-box form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.thread-box textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-family: Arial, sans-serif;
+    resize: vertical;
+}
+
+.thread-box form label {
+    font-weight: bold;
+}
+
+.thread-box form input[type="checkbox"] {
+    margin-right: 6px;
+}
+
+.thread-box button {
+    background-color: #183d30;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.thread-box button:hover {
+    background-color: #285744;
+}
+
+.thread-footer {
+    text-align: center;
+    padding: 20px;
+}
+
+
+/* =================================
+   PROFILE PAGE
+================================= */
+
+.profile-header {
+    background-color: #183d30;
+    color: white;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.profile-header a {
+    color: white;
+}
+
+.profile-box {
+    background-color: white;
+    width: 700px;
+    max-width: 90%;
+    margin: 30px auto;
+    padding: 25px;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+
+.user-info {
+    background-color: #f4f1e8;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+
+/* Editable About Me Form */
+
+.profile-box form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.profile-box textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-family: Arial, sans-serif;
+    resize: vertical;
+}
+
+.profile-box form button,
+.profile-button {
+    background-color: #183d30;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.profile-box form button:hover,
+.profile-button:hover {
+    background-color: #285744;
+}
+
+.profile-post {
+    background-color: #f4f1e8;
+    padding: 15px;
+    margin: 15px 0;
+    border-radius: 8px;
+}
+
+.profile-post a {
+    color: #183d30;
+    font-weight: bold;
+}
+
+.profile-footer {
+    text-align: center;
+    padding: 20px;
+}
+
+
+/* =================================
+   HELPER CLASSES
+================================= */
+
+/* Anonymous user label */
+
+.badge-anon {
+    display: inline-block;
+    background-color: #eeeeee;
+    color: #555555;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* Registered user label */
+
+.badge-user {
+    display: inline-block;
+    background-color: #e5f0e9;
+    color: #183d30;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* Green text */
+
+.greentext {
+    color: #789922;
+}
+
+/* Quote and action links */
+
+.quote-link {
+    color: #183d30;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+
+/* MOBILE SCREEN SUPPORT */
+
+@media (max-width: 600px) {
+
+    .home-header,
+    .login-header,
+    .register-header,
+    .thread-header,
+    .profile-header {
+        padding: 15px;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .home-header nav {
+        text-align: center;
+    }
+
+    .home-header nav a {
+        display: inline-block;
+        margin: 5px;
+    }
+
+    .login-card {
+        padding: 25px;
+    }
+
+    .register-box {
+        width: 100%;
+        max-width: 90%;
+    }
+
+    .home-content {
+        max-width: 95%;
+    }
+
+    .thread-box,
+    .profile-box {
+        max-width: 90%;
+    }
+
+    .search-sort {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-sort input,
+    .search-sort select,
+    .search-sort button {
+        width: 100%;
+        box-sizing: border-box;
+    }
+}
