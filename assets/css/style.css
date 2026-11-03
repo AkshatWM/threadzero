@@ -1,11 +1,18 @@
-/* Homepage */
-
-.home-page {
+.home-page,
+.login-page,
+.register-page,
+.thread-page,
+.profile-page {
     margin: 0;
     background-color: #f4f1e8;
     font-family: Arial, sans-serif;
     color: #263b32;
 }
+
+
+/* =============
+  HOMEPAGE 
+============== */
 
 .home-header {
     background-color: #183d30;
@@ -77,23 +84,63 @@
     border-radius: 8px;
 }
 
+/* Create New Thread Form */
+
+.recent-box form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.recent-box form input[type="text"],
+.recent-box form textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+.recent-box form textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.recent-box form label {
+    font-weight: bold;
+}
+
+.recent-box form input[type="checkbox"] {
+    margin-right: 6px;
+}
+
+.recent-box form button {
+    background-color: #183d30;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.recent-box form button:hover {
+    background-color: #263b32;
+}
+
 .home-footer {
     text-align: center;
     padding: 20px;
 }
 
 
-
-
-
-/* Login Page */
+/* =================================
+   LOGIN PAGE
+================================= */
 
 .login-page {
-    margin: 0;
     min-height: 100vh;
-    background-color: #f4f1e8;
-    font-family: Arial, sans-serif;
-    color: #263b32;
 }
 
 .login-header {
@@ -173,6 +220,22 @@
     background-color: #285744;
 }
 
+/* Login Sections */
+
+.login-section {
+    margin-top: 20px;
+}
+
+.token-section {
+    border-top: 1px solid #ddd;
+    margin-top: 25px;
+    padding-top: 20px;
+}
+
+.token-section input {
+    letter-spacing: 2px;
+}
+
 .register-text {
     text-align: center;
     margin-top: 25px;
@@ -190,15 +253,9 @@
 }
 
 
-
-/* Registration Page */
-
-.register-page {
-    margin: 0;
-    background-color: #f4f1e8;
-    font-family: Arial, sans-serif;
-    color: #263b32;
-}
+/* =================================
+   REGISTRATION PAGE
+================================= */
 
 .register-header {
     background-color: #183d30;
@@ -216,9 +273,11 @@
 .register-box {
     background-color: white;
     width: 350px;
+    max-width: 85%;
     margin: 40px auto;
     padding: 25px;
     border-radius: 10px;
+    box-sizing: border-box;
 }
 
 .register-box h1,
@@ -236,6 +295,8 @@
     padding: 10px;
     margin-top: 5px;
     box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 5px;
 }
 
 .register-box button {
@@ -245,6 +306,7 @@
     background-color: #183d30;
     color: white;
     border: none;
+    border-radius: 5px;
     cursor: pointer;
 }
 
@@ -252,21 +314,27 @@
     background-color: #285744;
 }
 
+/* Registration Token Section */
+
+.register-section {
+    margin-top: 20px;
+}
+
+.register-box .token-section {
+    border-top: 1px solid #ddd;
+    margin-top: 25px;
+    padding-top: 20px;
+}
+
 .register-footer {
     text-align: center;
+    padding: 20px;
 }
 
 
-
-
-/* Thread Page */
-
-.thread-page {
-    margin: 0;
-    background-color: #f4f1e8;
-    font-family: Arial, sans-serif;
-    color: #263b32;
-}
+/* =================================
+   THREAD PAGE
+================================= */
 
 .thread-header {
     background-color: #183d30;
@@ -288,6 +356,7 @@
     margin: 30px auto;
     padding: 25px;
     border-radius: 10px;
+    box-sizing: border-box;
 }
 
 .thread-info {
@@ -302,11 +371,31 @@
     border-radius: 5px;
 }
 
+/* Reply Form */
+
+.thread-box form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
 .thread-box textarea {
     width: 100%;
-    height: 100px;
+    min-height: 100px;
     padding: 10px;
     box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-family: Arial, sans-serif;
+    resize: vertical;
+}
+
+.thread-box form label {
+    font-weight: bold;
+}
+
+.thread-box form input[type="checkbox"] {
+    margin-right: 6px;
 }
 
 .thread-box button {
@@ -314,8 +403,12 @@
     color: white;
     padding: 10px 20px;
     border: none;
-    margin-top: 10px;
+    border-radius: 5px;
     cursor: pointer;
+}
+
+.thread-box button:hover {
+    background-color: #285744;
 }
 
 .thread-footer {
@@ -324,17 +417,9 @@
 }
 
 
-
-
-
-/* Profile Page */
-
-.profile-page {
-    margin: 0;
-    background-color: #f4f1e8;
-    font-family: Arial, sans-serif;
-    color: #263b32;
-}
+/* =================================
+   PROFILE PAGE
+================================= */
 
 .profile-header {
     background-color: #183d30;
@@ -356,12 +441,47 @@
     margin: 30px auto;
     padding: 25px;
     border-radius: 10px;
+    box-sizing: border-box;
 }
 
 .user-info {
     background-color: #f4f1e8;
     padding: 15px;
     border-radius: 8px;
+}
+
+/* Editable About Me Form */
+
+.profile-box form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.profile-box textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-family: Arial, sans-serif;
+    resize: vertical;
+}
+
+.profile-box form button,
+.profile-button {
+    background-color: #183d30;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.profile-box form button:hover,
+.profile-button:hover {
+    background-color: #285744;
 }
 
 .profile-post {
@@ -379,4 +499,47 @@
 .profile-footer {
     text-align: center;
     padding: 20px;
+}
+
+
+/* MOBILE SCREEN SUPPORT */
+
+@media (max-width: 600px) {
+
+    .home-header,
+    .login-header,
+    .register-header,
+    .thread-header,
+    .profile-header {
+        padding: 15px;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .home-header nav {
+        text-align: center;
+    }
+
+    .home-header nav a {
+        display: inline-block;
+        margin: 5px;
+    }
+
+    .login-card {
+        padding: 25px;
+    }
+
+    .register-box {
+        width: 100%;
+        max-width: 90%;
+    }
+
+    .home-content {
+        max-width: 95%;
+    }
+
+    .thread-box,
+    .profile-box {
+        max-width: 90%;
+    }
 }
