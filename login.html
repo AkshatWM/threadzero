@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Login - ThreadZero</title>
 
     <link rel="stylesheet" href="assets/css/style.css">
@@ -18,35 +19,83 @@
     <main class="login-container">
 
         <div class="login-card">
+
             <h1>Welcome Back</h1>
-            <p class="login-subtitle">Log in to join the conversation.</p>
+            <p class="login-subtitle">
+                Log in to join the conversation.
+            </p>
 
-            <form>
-                <label for="username">Username or Email</label>
-                <input
-                    type="text"
-                    id="username"
-                    name="username"
-                    placeholder="Enter your username or email"
-                    required
-                >
+            <!-- Username and Password Login -->
+            <section class="login-section">
 
-                <label for="password">Password</label>
-                <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    placeholder="Enter your password"
-                    required
-                >
+                <h2>Username Login</h2>
 
-                <button type="submit" class="login-button">Log In</button>
-            </form>
+                <form method="POST">
+
+                    <label for="username">Username</label>
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        placeholder="Enter your username"
+                        required
+                    >
+
+                    <label for="password">Password</label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Enter your password"
+                        required
+                    >
+
+                    <button type="submit" class="login-button">
+                        Log In
+                    </button>
+
+                </form>
+
+            </section>
+
+            <!-- 16-Digit Token Login -->
+            <section class="login-section token-section">
+
+                <h2>Token Login</h2>
+
+                <p>
+                    Log in using your 16-digit ThreadZero token.
+                </p>
+
+                <form method="POST">
+
+                    <label for="token">16-Digit Token</label>
+
+                    <input
+                        type="text"
+                        id="token"
+                        name="token"
+                        placeholder="Enter your 16-digit token"
+                        inputmode="numeric"
+                        maxlength="16"
+                        pattern="[0-9]{16}"
+                        title="Please enter a 16-digit token"
+                        required
+                    >
+
+                    <button type="submit" class="login-button">
+                        Login with Token
+                    </button>
+
+                </form>
+
+            </section>
 
             <p class="register-text">
                 Don't have an account?
                 <a href="register.html">Create one</a>
             </p>
+
         </div>
 
     </main>
