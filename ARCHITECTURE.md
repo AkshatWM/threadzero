@@ -43,11 +43,10 @@ Designed to allow open discussion while preventing anonymous harassment in the c
 - **Text Formatting:** Lines starting with `>` render in green (`.greentext`). Typing `>>1002` creates a clickable link (`#p1002`) that jumps to post `#1002`.
 
 ### D. Static Frontend Prototype (`*.html` + `assets/css/style.css`)
-Two static design pages remain after `login.html`, `register.html` and `index.html` were folded into the PHP pages:
+One static design page remains after `login.html`, `register.html`, `index.html` and `thread.html` were folded into the PHP pages:
 
 | Prototype | Becomes |
 |---|---|
-| `thread.html` | `thread.php` (read-only view done; reply engine pending) |
 | `profile.html` | `profile.php` (placeholder shell) |
 
 These `.html` files are **design references, not production routes**. They share `assets/css/style.css` and already use the final class names (`.badge-anon`, `.badge-user`, `.greentext`, `.quote-link`, `.thread-post`, `.reply-box`). When a page is converted to PHP, keep the same markup and class names, then replace the hard-coded sample content with database queries.
@@ -265,13 +264,15 @@ The static prototypes already use these names. Do not invent new ones; the PHP p
 | Token login | `token_login` | `token` (16 digits, hyphens/spaces allowed in input) |
 | Logout | `logout` | none |
 | Create thread | `create_thread` | `board_id`, `title`, `content`, `is_anon`, `image` (optional file) |
-| Reply | `reply` | `content`, `sage` |
+| Reply | `post_reply` | `content`, `sage`, `image` (optional file) |
+| Edit post | `edit_post` | `post_id`, `content` |
+| Delete post | `delete_post` | `post_id` |
+| Toggle bookmark | `toggle_bookmark` | none |
+| Report post | `report_post` | `post_id` |
 | Update bio | `update_bio` | `bio` |
-| Remove bookmark | `remove_bookmark` | `post_id` |
-| Report post | `report` | `post_id` |
 | Moderation | `unflag`, `pin`, `lock`, `delete` | `post_id` |
 
-**GET field names:** `search`, `sort` (`bumped` or `newest`), `board` (slug), `page` (future).
+**GET field names:** `search`, `sort` (`bumped` or `newest`), `board` (slug), `id` (thread), `edit` (post being edited), `page` (future).
 
 **Session keys:** `user_id`, `username`, `role`, `csrf_token`, `failed_logins`. On logout, clear `$_SESSION`, expire the session cookie, then `session_destroy()`.
 
@@ -309,11 +310,13 @@ Any developer can pick up and build one of these self-contained modules:
 * Counts replies per thread dynamically or via subquery and lists threads ordered by `is_pinned DESC, bumped_at DESC`.
 
 
-* **Module 3: `thread.php` (Replies, Bump/Sage, Edit/Delete, Report)**
+* **Module 3: `thread.php` (Replies, Bump/Sage, Edit/Delete, Bookmark, Report)**
 * Fetches parent thread (`WHERE id = ? AND parent_id IS NULL`) and all replies (`WHERE parent_id = ? ORDER BY created_at ASC`).
 * Reply form has a `Sage (Don't bump)` checkbox. If unchecked, runs `UPDATE posts SET bumped_at = NOW() WHERE id = ?`.
-* Shows inline **Edit** (`UPDATE posts SET content = ?`) and **Delete** (`DELETE FROM posts WHERE id = ?`) buttons if `$_SESSION['user_id'] == $post['user_id']`.
-* Includes a one-click **Bookmark** button (`INSERT INTO bookmarks`) and **Report** button (`UPDATE posts SET is_reported = 1 WHERE id = ?`).
+* Shows inline **Edit** (`UPDATE posts SET content = ?`) and **Delete** (`DELETE FROM posts WHERE id = ?`) buttons if `$_SESSION['user_id'] == $post['user_id']`; moderators may delete any post.
+* Includes a one-click **Bookmark** toggle (`INSERT` / `DELETE` on `bookmarks`) and a **Report** button (`UPDATE posts SET is_reported = 1 WHERE id = ?`).
+* Locked threads reject new replies for regular users; moderators can still post.
+* Successful actions use POST → redirect → GET; bookmark/report messages are passed through a one-shot session flash.
 
 
 * **Module 4: `profile.php` (User Dashboard)**

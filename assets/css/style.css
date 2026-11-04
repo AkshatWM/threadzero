@@ -276,6 +276,17 @@
     font-weight: bold;
 }
 
+/* One-shot success message after a redirect */
+.form-success {
+    background-color: #dcfce7;
+    color: #166534;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: bold;
+}
+
 .login-card label {
     display: block;
     margin-bottom: 8px;
