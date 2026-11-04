@@ -43,12 +43,11 @@ Designed to allow open discussion while preventing anonymous harassment in the c
 - **Text Formatting:** Lines starting with `>` render in green (`.greentext`). Typing `>>1002` creates a clickable link (`#p1002`) that jumps to post `#1002`.
 
 ### D. Static Frontend Prototype (`*.html` + `assets/css/style.css`)
-Three static design pages remain after `login.html` and `register.html` were folded into `auth.php`:
+Two static design pages remain after `login.html`, `register.html` and `index.html` were folded into the PHP pages:
 
 | Prototype | Becomes |
 |---|---|
-| `index.html` | `index.php` (landing page done; feed/search pending) |
-| `thread.html` | `thread.php` (not built yet) |
+| `thread.html` | `thread.php` (read-only view done; reply engine pending) |
 | `profile.html` | `profile.php` (placeholder shell) |
 
 These `.html` files are **design references, not production routes**. They share `assets/css/style.css` and already use the final class names (`.badge-anon`, `.badge-user`, `.greentext`, `.quote-link`, `.thread-post`, `.reply-box`). When a page is converted to PHP, keep the same markup and class names, then replace the hard-coded sample content with database queries.

@@ -1,7 +1,7 @@
 # ThreadZero ⚡
 
 > **Status:** 🚧 Active Development (MVP Phase)
-> **Current build:** Module 1 (dual authentication) is implemented, along with the 4-table schema, config and shared partials. Board feed, threads, profile and moderation modules are still pending — see [`PROGRESS.md`](./PROGRESS.md).
+> **Current build:** Modules 1–2 are implemented (dual authentication, board feed, search, sort, thread creation and image uploads), with a read-only thread view. The reply engine, profile and moderation modules are still pending — see [`PROGRESS.md`](./PROGRESS.md).
 > **Architecture & Developer Guide:** See [`ARCHITECTURE.md`](./ARCHITECTURE.md) for the full system specification, database schema, and module guidelines.
 
 **ThreadZero** is a privacy-first hybrid discussion board and imageboard engine built with **PHP 8 (PDO)**, **MySQL**, **HTML5/CSS3**, and **Vanilla JavaScript**. It combines the structured community boards of Reddit, the fast minimalist thread mechanics of 4chan/Hacker News, and the zero-knowledge authentication model of Mullvad VPN.
@@ -44,7 +44,7 @@ threadzero/
 ├── assets/
 │   ├── css/style.css        # Shared stylesheet (plain CSS, no framework)
 │   ├── js/app.js            # Theme switcher & click-to-quote helpers (Module 6)
-│   └── uploads/             # Thread image attachments (Module 2)
+│   └── uploads/             # Thread image attachments (created at runtime)
 ├── config/
 │   ├── db.php               # PDO connection, session init, CSRF seed, APP_SECRET
 │   └── functions.php        # isLoggedIn, isMod, CSRF, OP masking, text parser
@@ -54,11 +54,11 @@ threadzero/
 ├── sql/
 │   ├── schema.sql           # 4-table schema + default boards (re-runnable)
 │   └── seed.sql             # Demo users, threads and replies (pending)
-├── index.php                # Landing page + board list (Module 2 feed pending)
+├── index.php                # Board feed, search, sort & new-thread form
+├── thread.php               # Read-only thread view (reply form pending Module 3)
 ├── auth.php                 # Dual login/signup + 16-digit token generator
 ├── profile.php              # Placeholder shell (Module 4 pending)
 ├── admin.php                # Mod-only placeholder shell (Module 5 pending)
-├── index.html               # Static prototype: home feed
 ├── thread.html              # Static prototype: thread & replies
 ├── profile.html             # Static prototype: bio, posts & bookmarks
 ├── ARCHITECTURE.md          # Full technical spec for devs & AI assistants
@@ -98,13 +98,13 @@ C:\laragon\bin\mysql\mysql-8.4.3-winx64\bin\mysql.exe -u root -e "source C:/lara
 ## 📋 Development Roadmap
 
 - [x] Architecture & 4-Table Schema Design (`ARCHITECTURE.md`)
-- [x] Static frontend prototypes (3 remaining HTML pages + `assets/css/style.css`)
+- [x] Static frontend prototypes (2 remaining HTML pages + `assets/css/style.css`)
 - [x] Database schema: `sql/schema.sql` (4 tables + default boards)
 - [x] Core config & shared partials (`config/`, `includes/`)
 - [x] Module 1: Dual Authentication & 16-Digit Token Generator (`auth.php`)
+- [x] Module 2: Board Feed, Search, Sort & Thread Creation (`index.php`)
 - [ ] Demo data: `sql/seed.sql`
-- [ ] Module 2: Board Feed, Search & Thread Creation (`index.php` — landing page only)
-- [ ] Module 3: Thread Replies, Asymmetric Anonymity & Bump/Sage (`thread.php`)
+- [ ] Module 3: Thread Replies, Bump/Sage, Edit/Delete & Reporting (`thread.php` — read-only view done)
 - [ ] Module 4: User Profile & Bookmarks (`profile.php` — placeholder only)
 - [ ] Module 5: Moderation & Reporting Dashboard (`admin.php` — placeholder only)
 - [ ] Module 6: Theme toggle, click-to-quote and form polish (`assets/js/app.js`)

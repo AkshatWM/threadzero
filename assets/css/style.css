@@ -88,6 +88,11 @@
     flex: 1;
     min-width: 180px;
     border-radius: 8px;
+    border: 2px solid transparent;
+}
+
+.board-box.active {
+    border-color: #183d30;
 }
 
 .board-box a,
