@@ -1,7 +1,7 @@
 # ThreadZero ⚡
 
 > **Status:** 🚧 Active Development (MVP Phase)
-> **Current build:** static HTML/CSS prototype merged; PHP, MySQL and JavaScript still pending — see [`PROGRESS.md`](./PROGRESS.md).
+> **Current build:** Module 1 (dual authentication) is implemented, along with the 4-table schema, config and shared partials. Board feed, threads, profile and moderation modules are still pending — see [`PROGRESS.md`](./PROGRESS.md).
 > **Architecture & Developer Guide:** See [`ARCHITECTURE.md`](./ARCHITECTURE.md) for the full system specification, database schema, and module guidelines.
 
 **ThreadZero** is a privacy-first hybrid discussion board and imageboard engine built with **PHP 8 (PDO)**, **MySQL**, **HTML5/CSS3**, and **Vanilla JavaScript**. It combines the structured community boards of Reddit, the fast minimalist thread mechanics of 4chan/Hacker News, and the zero-knowledge authentication model of Mullvad VPN.
@@ -33,7 +33,7 @@
 | **Frontend**           | HTML5, custom CSS3 (`assets/css/style.css`), Vanilla JavaScript         |
 | **Backend**            | PHP 8.x (Procedural + PDO Prepared Statements, Native Sessions)         |
 | **Database**           | MySQL / MariaDB (4 Normalized Tables with `ON DELETE CASCADE`)          |
-| **Server Environment** | Apache + MySQL (XAMPP / WAMP / LAMP)                                    |
+| **Server Environment** | Laragon (Apache + MySQL), XAMPP, WAMP or LAMP               |
 
 ---
 
@@ -42,74 +42,72 @@
 ```text
 threadzero/
 ├── assets/
-│   ├── css/style.css        # Shared stylesheet for all static pages
-│   ├── js/app.js            # Theme switcher & click-to-quote helpers (pending)
-│   └── uploads/             # Thread image attachments (pending)
+│   ├── css/style.css        # Shared stylesheet (plain CSS, no framework)
+│   ├── js/app.js            # Theme switcher & click-to-quote helpers (Module 6)
+│   └── uploads/             # Thread image attachments (Module 2)
 ├── config/
-│   ├── db.php               # PDO connection, session init & APP_SECRET (pending)
-│   └── functions.php        # Auth checks, OP masking, CSRF & text parsers (pending)
+│   ├── db.php               # PDO connection, session init, CSRF seed, APP_SECRET
+│   └── functions.php        # isLoggedIn, isMod, CSRF, OP masking, text parser
 ├── includes/
-│   ├── header.php           # Shared navigation & board bar (pending)
-│   └── footer.php           # Shared footer & script imports (pending)
+│   ├── header.php           # Shared navigation (POST logout + CSRF)
+│   └── footer.php           # Shared footer
 ├── sql/
-│   ├── schema.sql           # 4-table database schema (pending)
-│   └── seed.sql             # Starter boards & sample threads (pending)
+│   ├── schema.sql           # 4-table schema + default boards (re-runnable)
+│   └── seed.sql             # Demo users, threads and replies (pending)
+├── index.php                # Landing page + board list (Module 2 feed pending)
+├── auth.php                 # Dual login/signup + 16-digit token generator
+├── profile.php              # Placeholder shell (Module 4 pending)
+├── admin.php                # Mod-only placeholder shell (Module 5 pending)
 ├── index.html               # Static prototype: home feed
-├── login.html               # Static prototype: dual login
-├── register.html            # Static prototype: signup + token reveal
 ├── thread.html              # Static prototype: thread & replies
 ├── profile.html             # Static prototype: bio, posts & bookmarks
-├── index.php                # Board directory, search & thread feed (pending)
-├── thread.php               # Thread view, replies & Bump/Sage engine (pending)
-├── auth.php                 # Dual Login/Signup + 16-digit Token generator (pending)
-├── profile.php              # User bio editor, post history & bookmarks (pending)
-├── admin.php                # Moderator dashboard (Pin, Lock, Delete) (pending)
 ├── ARCHITECTURE.md          # Full technical spec for devs & AI assistants
 ├── README.md                # Project overview & setup instructions
 └── PROGRESS.md              # Live build tracker & module completion log
-
 ```
 
 ---
 
-## 🚀 Local Setup (XAMPP)
+## 🚀 Local Setup (Laragon)
 
-1. **Clone the repository into your XAMPP `htdocs` folder:**
+1. **Put the project in Laragon's web root:**
 
-```bash
-cd C:/xampp/htdocs
-git clone https://github.com/<your-username>/threadzero.git
-
+```text
+C:\laragon\www\threadzero
 ```
 
-2. **Start Apache & MySQL:**
-   Open the **XAMPP Control Panel** and start both **Apache** and **MySQL**.
-3. **Import the Database Schema:**
+2. **Start Apache and MySQL** from the Laragon menu (or click **Start All**).
+3. **Create and seed the database.** Open **HeidiSQL** or **phpMyAdmin** from Laragon, then import/run [`sql/schema.sql`](./sql/schema.sql). It creates the `threadzero` database, the four tables and the four default boards.
 
-- Open [`http://localhost/phpmyadmin`](http://localhost/phpmyadmin) in your browser.
-- Click the **Import** tab (or **SQL** tab) and run [`sql/schema.sql`](https://www.google.com/search?q=./sql/schema.sql) to create the `threadzero` database and default boards.
-- _(Optional)_ Run [`sql/seed.sql`](https://www.google.com/search?q=./sql/seed.sql) to populate demo accounts and sample threads.
+   From a terminal you can run the same file with Laragon's MySQL client:
 
-4. **Configure Database Credentials (if needed):**
-   By default, [`config/db.php`](https://www.google.com/search?q=./config/db.php) uses standard XAMPP credentials (`host=localhost`, `user=root`, `pass=""`). Update if your local MySQL uses a custom password.
-5. **Launch the App:**
-   Visit [`http://localhost/threadzero/`](http://localhost/threadzero/) in your browser.
+```powershell
+C:\laragon\bin\mysql\mysql-8.4.3-winx64\bin\mysql.exe -u root -e "source C:/laragon/www/threadzero/sql/schema.sql"
+```
 
-> **Frontend note:** The five `.html` files are static design prototypes and open directly in a browser. The production app is the `.php` set, which reuses the same markup and `assets/css/style.css`. There is no CSS framework, no `npm install`, and no build step.
+4. **Configure database credentials (if needed).**
+   [`config/db.php`](./config/db.php) defaults to `host=localhost`, `user=root`, `pass=""`, which matches a stock Laragon install. Change it if your MySQL uses a password.
+5. **Set a real `APP_SECRET` before publishing.** Locally the code falls back to a development placeholder. For any shared or deployed copy, set the `THREADZERO_APP_SECRET` environment variable so token lookup hashes cannot be reproduced from the repository.
+6. **Launch the app:**
+   Visit [`http://localhost/threadzero/`](http://localhost/threadzero/) — the landing page is `index.php`. Authentication lives at [`http://localhost/threadzero/auth.php`](http://localhost/threadzero/auth.php).
+
+> **Frontend note:** The remaining `.html` files are static design references. The production app is the `.php` set, which reuses the same markup and `assets/css/style.css`. There is no CSS framework, no `npm install`, and no build step.
 
 ---
 
 ## 📋 Development Roadmap
 
 - [x] Architecture & 4-Table Schema Design (`ARCHITECTURE.md`)
-- [x] Static frontend prototypes (5 HTML pages + `assets/css/style.css`)
-- [ ] Database Files: `sql/schema.sql` + `sql/seed.sql`
-- [ ] Core Config & Shared UI Partials (`config/`, `includes/`, `assets/css/style.css`)
-- [ ] Module 1: Dual Authentication & 16-Digit Token Generator (`auth.php`)
-- [ ] Module 2: Board Feed, Search & Thread Creation (`index.php`)
+- [x] Static frontend prototypes (3 remaining HTML pages + `assets/css/style.css`)
+- [x] Database schema: `sql/schema.sql` (4 tables + default boards)
+- [x] Core config & shared partials (`config/`, `includes/`)
+- [x] Module 1: Dual Authentication & 16-Digit Token Generator (`auth.php`)
+- [ ] Demo data: `sql/seed.sql`
+- [ ] Module 2: Board Feed, Search & Thread Creation (`index.php` — landing page only)
 - [ ] Module 3: Thread Replies, Asymmetric Anonymity & Bump/Sage (`thread.php`)
-- [ ] Module 4: User Profile & Bookmarks (`profile.php`)
-- [ ] Module 5: Moderation & Reporting Dashboard (`admin.php`)
+- [ ] Module 4: User Profile & Bookmarks (`profile.php` — placeholder only)
+- [ ] Module 5: Moderation & Reporting Dashboard (`admin.php` — placeholder only)
+- [ ] Module 6: Theme toggle, click-to-quote and form polish (`assets/js/app.js`)
 
 ---
 

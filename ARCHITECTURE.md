@@ -43,22 +43,20 @@ Designed to allow open discussion while preventing anonymous harassment in the c
 - **Text Formatting:** Lines starting with `>` render in green (`.greentext`). Typing `>>1002` creates a clickable link (`#p1002`) that jumps to post `#1002`.
 
 ### D. Static Frontend Prototype (`*.html` + `assets/css/style.css`)
-The repository now contains five static design pages merged from the frontend PR:
+Three static design pages remain after `login.html` and `register.html` were folded into `auth.php`:
 
 | Prototype | Becomes |
 |---|---|
-| `index.html` | `index.php` |
-| `login.html` | `auth.php` (login mode) |
-| `register.html` | `auth.php` (signup + token mode) |
-| `thread.html` | `thread.php` |
-| `profile.html` | `profile.php` |
+| `index.html` | `index.php` (landing page done; feed/search pending) |
+| `thread.html` | `thread.php` (not built yet) |
+| `profile.html` | `profile.php` (placeholder shell) |
 
 These `.html` files are **design references, not production routes**. They share `assets/css/style.css` and already use the final class names (`.badge-anon`, `.badge-user`, `.greentext`, `.quote-link`, `.thread-post`, `.reply-box`). When a page is converted to PHP, keep the same markup and class names, then replace the hard-coded sample content with database queries.
 
 Rules for converting a prototype:
 1. Copy the markup into the `.php` file and include `config/db.php`, `config/functions.php`, `includes/header.php`, `includes/footer.php`.
 2. Keep the visible design, but replace every static post, user and board with `htmlspecialchars()` output from PDO queries.
-3. Add a hidden `action` input to every `POST` form (values in §4.1) and a `csrf_field()` call.
+3. Add a hidden `action` input to every `POST` form (values in §4.1) and call `csrfField()`.
 4. Do not add a second stylesheet or a framework; extend `assets/css/style.css` instead.
 5. `admin.php` has no static prototype yet — build it from the Module 5 spec.
 
@@ -69,8 +67,15 @@ Rules for converting a prototype:
 All team members and AI tools must strictly use this 4-table schema:
 
 ```sql
-CREATE DATABASE IF NOT EXISTS threadzero;
+CREATE DATABASE IF NOT EXISTS threadzero
+    CHARACTER SET utf8mb4
+    COLLATE utf8mb4_unicode_ci;
 USE threadzero;
+
+DROP TABLE IF EXISTS bookmarks;
+DROP TABLE IF EXISTS posts;
+DROP TABLE IF EXISTS boards;
+DROP TABLE IF EXISTS users;
 
 -- 1. USERS (Supports Standard Username/Password OR 16-Digit Mullvad Token)
 CREATE TABLE users (
@@ -82,7 +87,7 @@ CREATE TABLE users (
     role ENUM('user', 'mod') DEFAULT 'user',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE KEY unique_token_lookup (token_lookup)  -- fast token login; NULL for standard accounts
-);
+) ENGINE=InnoDB DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- 2. BOARDS (Discussion Categories)
 CREATE TABLE boards (
@@ -90,7 +95,7 @@ CREATE TABLE boards (
     slug VARCHAR(20) UNIQUE NOT NULL,              -- e.g., 'tech', 'science', 'gaming', 'general'
     title VARCHAR(100) NOT NULL,
     description VARCHAR(255) NOT NULL
-);
+) ENGINE=InnoDB DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- 3. POSTS (Self-Referencing: parent_id IS NULL = Thread, parent_id = ID = Reply)
 CREATE TABLE posts (
@@ -110,7 +115,7 @@ CREATE TABLE posts (
     FOREIGN KEY (board_id) REFERENCES boards(id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (parent_id) REFERENCES posts(id) ON DELETE CASCADE
-) AUTO_INCREMENT = 1000;
+) ENGINE=InnoDB DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AUTO_INCREMENT = 1001;
 
 -- 4. BOOKMARKS (Many-to-Many Junction Table: Users <-> Saved Threads)
 CREATE TABLE bookmarks (
@@ -121,10 +126,10 @@ CREATE TABLE bookmarks (
     UNIQUE KEY unique_bookmark (user_id, post_id),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE
-);
+) ENGINE=InnoDB DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
--- SEED DEFAULT BOARDS
-INSERT INTO boards (slug, title, description) VALUES
+-- SEED DEFAULT BOARDS (safe to re-run)
+INSERT IGNORE INTO boards (slug, title, description) VALUES
 ('tech', 'Technology & Systems', 'Software engineering, AI architectures, Linux, and hardware.'),
 ('science', 'Science & Research', 'Physics, mathematics, space exploration, and breakthroughs.'),
 ('gaming', 'Interactive Media & Gaming', 'PC/console gaming, game design, emulation, and anime.'),
@@ -137,10 +142,10 @@ INSERT INTO boards (slug, title, description) VALUES
 These rules protect the token-login and anonymity model. Do not skip them "to save time".
 
 1. **Never store secrets in plaintext.** Passwords and 16-digit tokens are stored only as `password_hash()` output. The token itself is shown **once** at signup and cannot be recovered.
-2. **Use a keyed lookup hash.** `token_lookup = hash_hmac('sha256', $token, APP_SECRET)` lets login find the row in one indexed query without storing a reversible value. If the database leaks, the attacker still needs `APP_SECRET` (kept in `config/db.php`, never committed to a public repo) to brute-force the lookup.
+2. **Use a keyed lookup hash.** `token_lookup = hash_hmac('sha256', $token, APP_SECRET)` lets login find the row in one indexed query without storing a reversible value. `APP_SECRET` is read from the `THREADZERO_APP_SECRET` environment variable, with a development fallback in `config/db.php`; set a real value before deploying so the committed repo cannot reproduce your hashes.
 3. **Verify, don't compare.** After the lookup, run `password_verify($token, $row['password_hash'])` before creating the session.
 4. **Generic error messages.** Always show "Invalid username or token" — never reveal whether an account exists.
-5. **Harden the session.** Call `session_regenerate_id(true)` immediately after login, and set cookies `HttpOnly`, `SameSite=Lax`, and `Secure` in production.
+5. **Harden the session.** Call `session_regenerate_id(true)` immediately after login, and set cookies `HttpOnly`, `SameSite=Lax`, and `Secure` whenever the request is HTTPS.
 6. **CSRF protection.** Every `POST` form includes a hidden token compared against `$_SESSION['csrf_token']`.
 7. **Escape output.** Every user string is printed through `htmlspecialchars()`. Every query uses PDO `?` placeholders.
 8. **Minimise data.** No emails, phone numbers, or IP logging. `users` stores only `username`, `password_hash`, `token_lookup`, `bio`, `role`, `created_at`.
@@ -158,28 +163,43 @@ Every root page (`index.php`, `thread.php`, `auth.php`, `profile.php`, `admin.ph
 ```php
 <?php
 // Harden the session cookie before starting the session
-session_set_cookie_params(['httponly' => true, 'samesite' => 'Lax']);
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_set_cookie_params([
+        'httponly' => true,
+        'samesite' => 'Lax',
+        'secure'   => !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off'
+    ]);
+    session_start();
+}
+
+// Generate a CSRF token for this session if one does not exist yet
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
 
 // Server-side pepper for token lookup hashes.
-// Change this for any real deployment and never commit the real value publicly.
-define('APP_SECRET', 'threadzero-dev-secret-change-me');
+// Set THREADZERO_APP_SECRET in the environment for any non-local deployment.
+$app_secret = getenv('THREADZERO_APP_SECRET');
+define('APP_SECRET', ($app_secret !== false && $app_secret !== '')
+    ? $app_secret
+    : 'threadzero-dev-secret-change-me');
 
 $host = 'localhost';
 $dbname = 'threadzero';
 $db_user = 'root';
-$db_pass = ''; // Default XAMPP password is empty
+$db_pass = ''; // Default Laragon/XAMPP password is empty
 
 try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $db_user,$db_pass, [
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $db_user, $db_pass, [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
     ]);
 } catch (PDOException $e) {
-    die("Database Connection Failed: " . $e->getMessage());
+    // Log the real error, never print it to the browser
+    error_log('ThreadZero database connection failed: ' . $e->getMessage());
+    http_response_code(500);
+    exit('ThreadZero is temporarily unavailable. Please try again later.');
 }
-?>
-
 ```
 
 ### `config/functions.php`
@@ -194,23 +214,16 @@ function isMod() {
     return isset($_SESSION['role']) && $_SESSION['role'] === 'mod';
 }
 
-// Creates (once per session) and returns the CSRF token
-function csrf_token() {
-    if (empty($_SESSION['csrf_token'])) {
-        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-    }
-    return $_SESSION['csrf_token'];
-}
-
 // Prints the hidden input that every POST form must contain
-function csrf_field() {
-    return '<input type="hidden" name="csrf_token" value="' . htmlspecialchars(csrf_token()) . '">';
+function csrfField() {
+    $token = htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8');
+    return '<input type="hidden" name="csrf_token" value="' . $token . '">';
 }
 
 // Returns true only when the posted token matches the session token
-function csrf_verify() {
-    return isset($_POST['csrf_token'], $_SESSION['csrf_token'])
-        && hash_equals($_SESSION['csrf_token'], $_POST['csrf_token']);
+function verifyCsrfToken($submittedToken) {
+    return isset($_SESSION['csrf_token'])
+        && hash_equals($_SESSION['csrf_token'], (string)$submittedToken);
 }
 
 // Decides whether to show "Anonymous [OP]" or "@username"
@@ -226,7 +239,8 @@ function renderAuthorBadge($post, $parentThread = null) {
         }
     }
     // 3. Regular accountable post/reply
-    return '<span class="badge-user">@' . htmlspecialchars($post['username']) . '</span>';
+    $username = htmlspecialchars($post['username'] ?? 'User', ENT_QUOTES, 'UTF-8');
+    return '<span class="badge-user">@' . $username . '</span>';
 }
 
 // Formats >greentext and >>1001 quote links
@@ -236,7 +250,6 @@ function formatPostBody($text) {
     $safe = preg_replace('/^(&gt;.*)$/m', '<span class="greentext">$1</span>', $safe);
     return nl2br($safe);
 }
-?>
 ```
 
 ### 4.1 Form Fields, Session Keys & Redirect Rules
@@ -261,14 +274,14 @@ The static prototypes already use these names. Do not invent new ones; the PHP p
 
 **GET field names:** `search`, `sort` (`bumped` or `newest`), `board` (slug), `page` (future).
 
-**Session keys:** `user_id`, `username`, `role`, `csrf_token`, `failed_logins`. Clear the whole session with `session_unset()` + `session_destroy()` on logout, then `session_regenerate_id(true)`.
+**Session keys:** `user_id`, `username`, `role`, `csrf_token`, `failed_logins`. On logout, clear `$_SESSION`, expire the session cookie, then `session_destroy()`.
 
 **Redirect rules:**
 - Successful standard login or signup → `index.php` (POST → redirect → GET).
-- Successful logout → `index.php`.
-- Token signup is the one exception: render `auth.php` directly from the POST response with the token shown once and a link to the login form. Never redirect with the token in the URL.
+- Successful logout → `auth.php`.
+- Token signup uses POST → redirect → GET as well: the plaintext token is stashed in `$_SESSION['generated_token']`, the POST redirects to `auth.php?mode=register&show_token=1`, and that GET renders the token once before deleting it from the session. The token never appears in the URL, and the response sends `Cache-Control: no-store`.
 - Validation or login failure → re-render the same form with `$error` and HTTP 200; never redirect with the error in the URL.
-- `auth.php` handles both login and signup modes; `login.html`/`register.html` are only the visual reference.
+- `auth.php` handles both login and signup modes; `login.html` and `register.html` have been removed now that their markup lives in `auth.php`.
 
 **Validation limits (enforce server-side and mirror in HTML):**
 - `username`: 3–20 characters, letters/digits/underscore only, unique.
@@ -285,10 +298,10 @@ Any developer can pick up and build one of these self-contained modules:
 
 * **Module 1: `auth.php` (Dual Login & Registration)**
 * **Standard Signup:** Inserts `username` and `password_hash($pass, PASSWORD_DEFAULT)` into `users`.
-* **Mullvad Token Generator:** Builds `$token = sprintf('%04d-%04d-%04d-%04d', random_int(0,9999), random_int(0,9999), random_int(0,9999), random_int(0,9999));`, then `$lookup = hash_hmac('sha256', $token, APP_SECRET)` and `$token_hash = password_hash($token, PASSWORD_DEFAULT)`. Inserts the handle (`Vault#` + last 4 digits, with a random suffix if taken), `password_hash = $token_hash`, and `token_lookup = $lookup`. The plaintext token is displayed **once** with a copy button and a warning to save it.
+* **Mullvad Token Generator:** Builds `$token = sprintf('%04d-%04d-%04d-%04d', random_int(0,9999), random_int(0,9999), random_int(0,9999), random_int(0,9999));`, then `$lookup = hash_hmac('sha256', $token, APP_SECRET)` and `$token_hash = password_hash($token, PASSWORD_DEFAULT)`. Inserts the handle (`Vault#` + last 4 digits) plus `password_hash` and `token_lookup`; a duplicate handle or lookup hash (`SQLSTATE 23000`) is retried with a fresh token. The plaintext token is shown **once** with a copy button and a warning to save it.
 * **Token Login:** Normalises the input (strip spaces and dashes), validates it is 16 digits, runs `SELECT * FROM users WHERE token_lookup = ?`, then verifies with `password_verify($token, $row['password_hash'])`. On success: `session_regenerate_id(true)`, set `$_SESSION['user_id']` and `$_SESSION['role']`.
-* **Login hardening:** Generic error message for both flows, and a `sleep(1)` delay after repeated failures in the same session.
-* **Form contract:** one `auth.php` page serves four `action` values — `signup` (`username`, `password`, `confirm_password`), `login` (`username`, `password`), `token_signup` (no fields), and `token_login` (`token`). The static `login.html` and `register.html` show the exact layout and field names.
+* **Login hardening:** Generic error message for both flows, and a `sleep(1)` delay plus a "too many attempts" warning after repeated failures in the same session.
+* **Form contract:** one `auth.php` page serves four `action` values — `signup` (`username`, `password`, `confirm_password`), `login` (`username`, `password`), `token_signup` (no fields), and `token_login` (`token`). Logout is a fifth `action` (`logout`) posted with a CSRF token.
 
 
 * **Module 2: `index.php` (Board Feed, Search & New Thread)**

@@ -34,6 +34,25 @@
     text-decoration: underline;
 }
 
+/* Logout is a POST form so it can carry a CSRF token */
+.home-header nav .logout-form {
+    display: inline;
+    margin: 8px;
+}
+
+.home-header nav .nav-link-button {
+    background: none;
+    border: none;
+    color: white;
+    font: inherit;
+    padding: 0;
+    cursor: pointer;
+}
+
+.home-header nav .nav-link-button:hover {
+    text-decoration: underline;
+}
+
 .welcome-box {
     background-color: #183d30;
     color: white;
@@ -75,6 +94,15 @@
 .recent-box a {
     color: #183d30;
     font-weight: bold;
+}
+
+/* Placeholder label while the board feed is still being built */
+.board-soon {
+    display: inline-block;
+    margin-top: 10px;
+    color: #666;
+    font-size: 13px;
+    font-style: italic;
 }
 
 .recent-box {
@@ -230,6 +258,17 @@
     text-align: center;
     color: #666;
     margin-bottom: 30px;
+}
+
+/* Inline validation / authentication error */
+.form-error {
+    background-color: #fee2e2;
+    color: #991b1b;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: bold;
 }
 
 .login-card label {
