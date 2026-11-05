@@ -301,10 +301,10 @@ include 'includes/header.php';
     <div id="p<?= (int)$thread['id'] ?>" class="thread-post">
         <h1>
             <?php if ((int)$thread['is_pinned'] === 1): ?>
-                <span style="color: #183d30;">[PINNED]</span>
+                <span class="status-pinned">[PINNED]</span>
             <?php endif; ?>
             <?php if ((int)$thread['is_locked'] === 1): ?>
-                <span style="color: #b91c1c;">[LOCKED]</span>
+                <span class="status-locked">[LOCKED]</span>
             <?php endif; ?>
             <?= htmlspecialchars($thread['title']) ?>
         </h1>
@@ -356,14 +356,14 @@ include 'includes/header.php';
                         <?= csrfField() ?>
                         <input type="hidden" name="action" value="delete_post">
                         <input type="hidden" name="post_id" value="<?= (int)$thread['id'] ?>">
-                        <button type="submit" style="background: none; border: none; color: #b91c1c; text-decoration: underline; padding: 0; font-size: 14px; cursor: pointer;">Delete</button>
+                        <button type="submit" class="action-button action-danger">Delete</button>
                     </form>
                 <?php endif; ?>
 
                 <form method="POST" action="thread.php?id=<?= (int)$thread['id'] ?>" style="display: inline;">
                     <?= csrfField() ?>
                     <input type="hidden" name="action" value="toggle_bookmark">
-                    <button type="submit" style="background: none; border: none; color: #183d30; text-decoration: underline; padding: 0; font-size: 14px; cursor: pointer;">
+                    <button type="submit" class="action-button action-neutral">
                         <?= $is_bookmarked ? 'Remove Bookmark' : 'Bookmark Thread' ?>
                     </button>
                 </form>
@@ -372,7 +372,7 @@ include 'includes/header.php';
                     <?= csrfField() ?>
                     <input type="hidden" name="action" value="report_post">
                     <input type="hidden" name="post_id" value="<?= (int)$thread['id'] ?>">
-                    <button type="submit" style="background: none; border: none; color: #666; text-decoration: underline; padding: 0; font-size: 14px; cursor: pointer;">
+                    <button type="submit" class="action-button action-muted">
                         <?= (int)$thread['is_reported'] === 1 ? 'Reported' : 'Report' ?>
                     </button>
                 </form>
@@ -435,7 +435,7 @@ include 'includes/header.php';
                                 <?= csrfField() ?>
                                 <input type="hidden" name="action" value="delete_post">
                                 <input type="hidden" name="post_id" value="<?= (int)$reply['id'] ?>">
-                                <button type="submit" style="background: none; border: none; color: #b91c1c; text-decoration: underline; padding: 0; font-size: 14px; cursor: pointer;">Delete</button>
+                                <button type="submit" class="action-button action-danger">Delete</button>
                             </form>
                         <?php endif; ?>
 
@@ -443,7 +443,7 @@ include 'includes/header.php';
                             <?= csrfField() ?>
                             <input type="hidden" name="action" value="report_post">
                             <input type="hidden" name="post_id" value="<?= (int)$reply['id'] ?>">
-                            <button type="submit" style="background: none; border: none; color: #666; text-decoration: underline; padding: 0; font-size: 14px; cursor: pointer;">
+                            <button type="submit" class="action-button action-muted">
                                 <?= (int)$reply['is_reported'] === 1 ? 'Reported' : 'Report' ?>
                             </button>
                         </form>
@@ -459,7 +459,7 @@ include 'includes/header.php';
     <h2 id="reply-form">Write a Reply</h2>
 
     <?php if ((int)$thread['is_locked'] === 1 && !isMod()): ?>
-        <p style="color: #b91c1c; font-weight: bold;">This thread has been locked by a moderator. New replies are disabled.</p>
+        <p class="locked-notice">This thread has been locked by a moderator. New replies are disabled.</p>
     <?php elseif (isLoggedIn()): ?>
         <form method="POST" action="thread.php?id=<?= (int)$thread['id'] ?>" enctype="multipart/form-data">
             <?= csrfField() ?>

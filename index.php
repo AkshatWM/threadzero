@@ -282,10 +282,10 @@ include 'includes/header.php';
             <div class="recent-box" id="p<?= (int)$thread['id'] ?>">
                 <h3>
                     <?php if ((int)$thread['is_pinned'] === 1): ?>
-                        <span style="color: #183d30;">[PINNED]</span>
+                        <span class="status-pinned">[PINNED]</span>
                     <?php endif; ?>
                     <?php if ((int)$thread['is_locked'] === 1): ?>
-                        <span style="color: #b91c1c;">[LOCKED]</span>
+                        <span class="status-locked">[LOCKED]</span>
                     <?php endif; ?>
                     <a href="thread.php?id=<?= (int)$thread['id'] ?>" style="text-decoration: none;">
                         <?= htmlspecialchars($thread['title']) ?>

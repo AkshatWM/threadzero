@@ -12,6 +12,16 @@ $body_class = $body_class ?? 'home-page';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($page_title) ?></title>
+    <script>
+        // Apply the saved theme before first paint so dark mode does not flash white
+        try {
+            if (localStorage.getItem('theme') === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+        } catch (e) {
+            // Storage can be blocked; fall back to the light theme
+        }
+    </script>
     <link rel="stylesheet" href="assets/css/style.css">
     <script src="assets/js/app.js" defer></script>
 </head>
@@ -38,5 +48,8 @@ $body_class = $body_class ?? 'home-page';
                 <a href="auth.php">Login</a>
                 <a href="auth.php?mode=register">Register</a>
             <?php endif; ?>
+            <button type="button" id="theme-toggle" class="theme-toggle-btn" onclick="toggleTheme()" aria-pressed="false">
+                Dark Mode
+            </button>
         </nav>
     </header>

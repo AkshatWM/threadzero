@@ -11,7 +11,7 @@ if (!isLoggedIn() || !isMod()) {
     ?>
     <main class="home-content">
         <div class="recent-box" style="text-align: center; padding: 50px;">
-            <h1 style="color: #b91c1c;">403 Access Denied</h1>
+            <h1 class="status-locked">403 Access Denied</h1>
             <p>You do not have moderator privileges to view this control panel.</p>
             <a href="index.php" class="home-button">Return Home</a>
         </div>

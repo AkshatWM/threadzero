@@ -1,7 +1,7 @@
 # ThreadZero ⚡
 
 > **Status:** 🚧 Active Development (MVP Phase)
-> **Current build:** Modules 1–5 are implemented (dual authentication, board feed, thread engine, profile/bookmarks and the moderation panel). Only the Module 6 theme toggle and final polish remain — see [`PROGRESS.md`](./PROGRESS.md).
+> **Current build:** All six modules are implemented (dual authentication, board feed, thread engine, profile/bookmarks, moderation panel and the light/dark theme toggle). Remaining work is demo data, the ER diagram and final screenshots — see [`PROGRESS.md`](./PROGRESS.md).
 > **Architecture & Developer Guide:** See [`ARCHITECTURE.md`](./ARCHITECTURE.md) for the full system specification, database schema, and module guidelines.
 
 **ThreadZero** is a privacy-first hybrid discussion board and imageboard engine built with **PHP 8 (PDO)**, **MySQL**, **HTML5/CSS3**, and **Vanilla JavaScript**. It combines the structured community boards of Reddit, the fast minimalist thread mechanics of 4chan/Hacker News, and the zero-knowledge authentication model of Mullvad VPN.
@@ -21,7 +21,7 @@
   - **Rich Text Parsing:** Native support for `>greentext` quotes and clickable `>>1001` post reference anchors.
 - **🛡️ Moderation & Bookmarks:**
   - Built-in post flagging, thread pinning/locking, and personal thread bookmarks.
-- **🌗 Dual Theme Engine (planned for Module 6):**
+- **🌗 Dual Theme Engine:**
   - Instant switching between **Retro Light (Yotsuba)** and **Modern Dark (Tomorrow)** modes using CSS variables and `localStorage`.
 
 ---
@@ -43,7 +43,7 @@
 threadzero/
 ├── assets/
 │   ├── css/style.css        # Shared stylesheet (plain CSS, no framework)
-│   ├── js/app.js            # Click-to-quote helper (theme toggle pending Module 6)
+│   ├── js/app.js            # Quote helper, theme toggle, counters & form checks
 │   └── uploads/             # Thread image attachments (created at runtime)
 ├── config/
 │   ├── db.php               # PDO connection, session init, CSRF seed, APP_SECRET
@@ -105,7 +105,7 @@ C:\laragon\bin\mysql\mysql-8.4.3-winx64\bin\mysql.exe -u root -e "source C:/lara
 - [x] Module 3: Thread Replies, Bump/Sage, Edit/Delete, Bookmarks & Reporting (`thread.php`)
 - [x] Module 4: User Profile, Post History & Bookmarks (`profile.php`)
 - [x] Module 5: Moderation & Reporting Dashboard (`admin.php`)
-- [ ] Module 6: Theme toggle and remaining client-side polish (`assets/js/app.js` — quote helper done)
+- [x] Module 6: Theme toggle and client-side polish (dark mode, live counters, min-length checks)
 
 ---
 

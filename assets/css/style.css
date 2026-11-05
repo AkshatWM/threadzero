@@ -120,15 +120,15 @@
 
 /* Create New Thread Form */
 
-.recent-box form {
+.recent-box form:not(.search-sort) {
     display: flex;
     flex-direction: column;
     gap: 12px;
 }
 
-.recent-box form input[type="text"],
-.recent-box form select,
-.recent-box form textarea {
+.recent-box form:not(.search-sort) input[type="text"],
+.recent-box form:not(.search-sort) select,
+.recent-box form:not(.search-sort) textarea {
     width: 100%;
     padding: 10px;
     border: 1px solid #ccc;
@@ -771,4 +771,240 @@
         width: 100%;
         box-sizing: border-box;
     }
+}
+
+
+/* =================================
+   MODULE 6: THEME VARIABLES & DARK MODE
+================================= */
+
+:root {
+    color-scheme: light;
+    --bg: #f4f1e8;
+    --card-bg: #ffffff;
+    --sub-bg: #f4f1e8;
+    --text-main: #263b32;
+    --text-muted: #666666;
+    --header-bg: #183d30;
+    --border-color: #cccccc;
+    --input-bg: #ffffff;
+}
+
+html[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #0f1412;
+    --card-bg: #18221e;
+    --sub-bg: #202d28;
+    --text-main: #e2e8f0;
+    --text-muted: #94a3b8;
+    --header-bg: #112a21;
+    --border-color: #2d3d35;
+    --input-bg: #111916;
+}
+
+.theme-toggle-btn {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    padding: 6px 12px;
+    margin-left: 8px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.theme-toggle-btn:hover {
+    background-color: rgba(255, 255, 255, 0.25);
+}
+
+/* Live character counter injected by app.js */
+.char-counter {
+    display: block;
+    text-align: right;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: -6px;
+}
+
+/* Thread status labels and inline action buttons (shared light/dark colours) */
+.status-pinned,
+.thread-box .action-neutral {
+    color: #183d30;
+}
+
+.status-locked,
+.thread-box .action-danger,
+.locked-notice {
+    color: #b91c1c;
+}
+
+.thread-box .action-muted {
+    color: #666666;
+}
+
+.thread-box .action-button,
+.action-button {
+    background: none;
+    border: none;
+    text-decoration: underline;
+    padding: 0;
+    font-size: 14px;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.locked-notice {
+    font-weight: bold;
+}
+
+/* Apply Dark Mode variables across existing page classes */
+html[data-theme="dark"] .home-page,
+html[data-theme="dark"] .login-page,
+html[data-theme="dark"] .register-page,
+html[data-theme="dark"] .thread-page,
+html[data-theme="dark"] .profile-page {
+    background-color: var(--bg);
+    color: var(--text-main);
+}
+
+html[data-theme="dark"] .home-header,
+html[data-theme="dark"] .login-header,
+html[data-theme="dark"] .register-header,
+html[data-theme="dark"] .thread-header,
+html[data-theme="dark"] .profile-header,
+html[data-theme="dark"] .welcome-box {
+    background-color: var(--header-bg);
+}
+
+html[data-theme="dark"] .board-box,
+html[data-theme="dark"] .recent-box,
+html[data-theme="dark"] .login-card,
+html[data-theme="dark"] .register-box,
+html[data-theme="dark"] .thread-box,
+html[data-theme="dark"] .profile-box,
+html[data-theme="dark"] table {
+    background-color: var(--card-bg) !important;
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+}
+
+html[data-theme="dark"] .reply-box,
+html[data-theme="dark"] .user-info,
+html[data-theme="dark"] .profile-post {
+    background-color: var(--sub-bg);
+    color: var(--text-main);
+}
+
+html[data-theme="dark"] input,
+html[data-theme="dark"] textarea,
+html[data-theme="dark"] select {
+    background-color: var(--input-bg);
+    color: var(--text-main);
+    border-color: var(--border-color);
+}
+
+html[data-theme="dark"] .board-box a,
+html[data-theme="dark"] .recent-box a,
+html[data-theme="dark"] .profile-post a,
+html[data-theme="dark"] .register-text a,
+html[data-theme="dark"] .quote-link,
+html[data-theme="dark"] .thread-box a,
+html[data-theme="dark"] table a {
+    color: #6ee7b7;
+}
+
+/* Muted helper text keeps enough contrast on the dark background */
+html[data-theme="dark"] .login-subtitle,
+html[data-theme="dark"] .login-footer,
+html[data-theme="dark"] .thread-info,
+html[data-theme="dark"] .board-soon {
+    color: var(--text-muted);
+}
+
+/* Active board outline and table dividers */
+html[data-theme="dark"] .board-box.active {
+    border-color: #6ee7b7;
+}
+
+html[data-theme="dark"] tr {
+    border-color: var(--border-color) !important;
+}
+
+html[data-theme="dark"] hr {
+    border-color: var(--border-color);
+}
+
+/* Form feedback messages */
+html[data-theme="dark"] .form-error {
+    background-color: #3f1d1d;
+    color: #fca5a5;
+}
+
+html[data-theme="dark"] .form-success {
+    background-color: #14301f;
+    color: #86efac;
+}
+
+/* One-time token reveal */
+html[data-theme="dark"] .token-reveal {
+    background-color: #14301f;
+    border-color: #2f6f52;
+}
+
+html[data-theme="dark"] .token-warning {
+    color: #fbbf24;
+}
+
+html[data-theme="dark"] .badge-anon {
+    background-color: #334155;
+    color: #f8fafc;
+}
+
+html[data-theme="dark"] .badge-user {
+    background-color: #1e3a2f;
+    color: #6ee7b7;
+}
+
+html[data-theme="dark"] .greentext {
+    color: #a3e635;
+}
+
+/* Primary buttons need a lighter accent so they stand out on dark cards */
+html[data-theme="dark"] .recent-box form button,
+html[data-theme="dark"] .search-sort button,
+html[data-theme="dark"] .login-button,
+html[data-theme="dark"] .register-box button,
+html[data-theme="dark"] .thread-box button:not(.action-button),
+html[data-theme="dark"] .profile-box form button,
+html[data-theme="dark"] .profile-button,
+html[data-theme="dark"] .token-reveal .home-button {
+    background-color: #2f6f52;
+    color: #ffffff;
+}
+
+html[data-theme="dark"] .recent-box form button:hover,
+html[data-theme="dark"] .search-sort button:hover,
+html[data-theme="dark"] .login-button:hover,
+html[data-theme="dark"] .register-box button:hover,
+html[data-theme="dark"] .thread-box button:not(.action-button):hover,
+html[data-theme="dark"] .profile-box form button:hover,
+html[data-theme="dark"] .profile-button:hover {
+    background-color: #3a8563;
+}
+
+/* Status labels and inline thread actions */
+html[data-theme="dark"] .status-pinned,
+html[data-theme="dark"] .action-neutral {
+    color: #6ee7b7;
+}
+
+html[data-theme="dark"] .status-locked,
+html[data-theme="dark"] .action-danger,
+html[data-theme="dark"] .locked-notice {
+    color: #f87171;
+}
+
+html[data-theme="dark"] .action-muted {
+    color: #94a3b8;
 }

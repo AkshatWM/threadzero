@@ -135,7 +135,6 @@ include 'includes/header.php';
                 rows="4"
                 maxlength="255"
                 placeholder="Write something about yourself..."
-                required
             ><?= htmlspecialchars($user['bio']) ?></textarea>
 
             <button type="submit" class="profile-button">Update Bio</button>

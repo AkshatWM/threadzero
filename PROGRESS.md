@@ -3,26 +3,26 @@
 **Project:** ThreadZero — Privacy-First Hybrid Discussion & Imageboard Engine
 **Stack:** HTML5, custom CSS3, Vanilla JS · PHP 8 (PDO) · MySQL / MariaDB
 **Type:** B.Tech Web Development Lab project (5-member team, 10–15 day timeline)
-**Last verified:** 5 Nov 2026 (repo scan of `C:\laragon\www\threadzero`, Modules 1–5 implemented)
+**Last verified:** 5 Nov 2026 (repo scan of `C:\laragon\www\threadzero`, Modules 1–6 implemented)
 
 ---
 
 ## 1. Executive Summary
 
-> **"Modules 1–5 work; only the theme polish remains."**
+> **"All six modules work; demo data and viva artefacts remain."**
 
-Modules 1–5 are implemented: dual authentication (`auth.php`), the 4-table schema (`sql/schema.sql`), the PDO/session layer (`config/db.php`), shared helpers (`config/functions.php`), the layout partials (`includes/`), the board feed (`index.php`), the full thread engine (`thread.php`), the profile dashboard (`profile.php`) and the moderator panel (`admin.php`). Only the Module 6 theme toggle and final client-side polish are pending.
+Modules 1–6 are implemented: dual authentication (`auth.php`), the 4-table schema (`sql/schema.sql`), the PDO/session layer (`config/db.php`), shared helpers (`config/functions.php`), the layout partials (`includes/`), the board feed (`index.php`), the full thread engine (`thread.php`), the profile dashboard (`profile.php`), the moderator panel (`admin.php`) and the light/dark theme engine (`assets/css/style.css` + `assets/js/app.js`). The remaining work is demo seed data, the ER diagram and screenshots.
 
 | Area | Completion |
 |---|---|
-| Planning / requirements | ~90% |
-| Design / architecture | ~90% |
-| Implementation | **~80%** (Modules 1–5 + foundation) |
-| Testing / deployment | **~45%** (Modules 1–5 tested against MySQL) |
-| Documentation / viva prep | ~80% |
-| **Overall project process** | **~75%** |
+| Planning / requirements | ~95% |
+| Design / architecture | ~95% |
+| Implementation | **~90%** (Modules 1–6 + foundation; only `seed.sql` missing) |
+| Testing / deployment | **~55%** (Modules 1–6 tested against MySQL) |
+| Documentation / viva prep | ~85% |
+| **Overall project process** | **~85%** |
 
-**Verdict:** all feature modules except the Module 6 theme polish are complete and tested.
+**Verdict:** every feature module is complete and tested; only demo data and presentation artefacts remain.
 
 ---
 
@@ -32,27 +32,27 @@ Modules 1–5 are implemented: dual authentication (`auth.php`), the 4-table sch
 
 | File / Folder | Size | Status | Notes |
 |---|---|---|---|
-| `README.md` | 7,109 bytes | ✅ Complete | Overview, current build status, feature list, project tree, Laragon setup, roadmap |
-| `ARCHITECTURE.md` | 23,222 bytes | ✅ Complete | Coding rules, 4-table schema, privacy rules, form/session conventions, shared helpers, module specs, viva checklist |
+| `README.md` | 7,114 bytes | ✅ Complete | Overview, current build status, feature list, project tree, Laragon setup, roadmap |
+| `ARCHITECTURE.md` | 24,665 bytes | ✅ Complete | Coding rules, 4-table schema, privacy rules, form/session conventions, shared helpers, module specs, viva checklist |
 | `PROGRESS.md` | this file | ✅ Live | Progress tracker |
 | `.gitignore` | 42 bytes | ✅ Present | Ignores `.docx`, `.pdf`, editor folders |
-| `assets/css/style.css` | 13,395 bytes | ✅ Base complete | Shared stylesheet for every page; green/cream theme, login/register/thread/profile sections, active-board and form-message states, mobile breakpoint |
-| `index.php` | 13,980 bytes | ✅ Module 2 complete | Board feed, search, sort, new-thread form, image upload, pinned-first ordering |
-| `thread.php` | 24,206 bytes | ✅ Module 3 complete | Thread + replies, Bump/Sage, inline edit/delete, bookmark toggle, reporting, locked-thread handling |
+| `assets/css/style.css` | 19,503 bytes | ✅ Complete | Shared stylesheet for every page; light/dark theme variables, page sections, active-board and form-message states, action-link colours, mobile breakpoint |
+| `index.php` | 13,976 bytes | ✅ Module 2 complete | Board feed, search, sort, new-thread form, image upload, pinned-first ordering |
+| `thread.php` | 23,716 bytes | ✅ Module 3 complete | Thread + replies, Bump/Sage, inline edit/delete, bookmark toggle, reporting, locked-thread handling |
 | `auth.php` | 17,319 bytes | ✅ Module 1 complete | Standard signup/login, 16-digit token signup/login, POST logout, CSRF, rate limiting |
-| `profile.php` | 7,249 bytes | ✅ Module 4 complete | Bio editor, own post/reply history, saved bookmarks with remove, flash messages |
-| `admin.php` | 10,266 bytes | ✅ Module 5 complete | Mod-only queue, unflag, pin/unpin, lock/unlock, delete; parent-thread resolution for replies |
+| `profile.php` | 7,224 bytes | ✅ Module 4 complete | Bio editor, own post/reply history, saved bookmarks with remove, flash messages |
+| `admin.php` | 10,264 bytes | ✅ Module 5 complete | Mod-only queue, unflag, pin/unpin, lock/unlock, delete; parent-thread resolution for replies |
 | `config/db.php` | 1,525 bytes | ✅ Complete | Hardened session, CSRF seed, env-based `APP_SECRET`, PDO to `threadzero`, generic DB error |
 | `config/functions.php` | 2,158 bytes | ✅ Complete | `isLoggedIn()`, `isMod()`, `csrfField()`, `verifyCsrfToken()`, `renderAuthorBadge()`, `formatPostBody()` |
-| `includes/header.php` | 1,625 bytes | ✅ Complete | Shared `<head>`, navbar, POST logout with CSRF, `app.js` include |
+| `includes/header.php` | 2,187 bytes | ✅ Complete | Shared `<head>`, pre-paint theme script, navbar, POST logout with CSRF, `app.js` include, theme toggle |
 | `includes/footer.php` | 133 bytes | ✅ Complete | Shared footer |
 | `sql/schema.sql` | 3,464 bytes | ✅ Complete | Re-runnable 4-table schema + default boards; `AUTO_INCREMENT = 1001` |
 | `sql/seed.sql` | — | ❌ Missing | Demo users, threads and replies not written yet |
 | `assets/uploads/` | — | ✅ Present | Runtime image upload folder, tracked with `.gitkeep` and a no-script `.htaccess` |
-| `assets/js/app.js` | 316 bytes | ✅ Partial | `quotePost()` click-to-quote helper; theme toggle and form polish arrive in Module 6 |
-| Git repo | ✅ Active | PR #1 merged as `a56d7ad`; Module 1 `99279fd`; Module 2 `90b951b`; Module 3 `130a329`; Modules 4–5 committed next |
+| `assets/js/app.js` | 2,973 bytes | ✅ Module 6 complete | Quote helper, theme toggle with `localStorage`, live character counters, minimum-length checks |
+| Git repo | ✅ Active | PR #1 merged as `a56d7ad`; Module 1 `99279fd`; Module 2 `90b951b`; Module 3 `130a329`; Modules 4–5 `aa7b8ed`; Module 6 committed next |
 
-**Still to build:** the Module 6 theme toggle and client-side polish, `sql/seed.sql`, the ER diagram image, screenshots and deployment evidence.
+**Still to build:** `sql/seed.sql`, the ER diagram image, screenshots and deployment evidence.
 
 > ✅ All static HTML prototypes (`index.html`, `thread.html`, `profile.html`, `login.html`, `register.html`) have been removed now that their PHP pages are real.
 
@@ -100,10 +100,10 @@ The spec drift has been settled. `ARCHITECTURE.md` is now the single source of t
 | 5 | Wireframes / UI flow | ✅ Done | All static prototypes were converted into the real PHP pages; shared stylesheet retained |
 | 6 | Architecture diagram | ⚠️ Partly | Folder architecture, shared helpers, and module boundaries documented in prose; **no diagram** |
 | 7 | Environment / repo setup | ✅ Done | Git repo, `.gitignore`, Laragon setup documented; `config/`, `includes/`, `sql/` tracked |
-| 8 | Backend / API implementation | ✅ Done (Modules 1–5) | `auth.php`, `index.php`, `thread.php`, `profile.php` and `admin.php` implemented |
-| 9 | Frontend implementation | ⚠️ Partial | All five PHP pages have working views; the Module 6 theme toggle is still missing |
-| 10 | Integration / auth implementation | ✅ Done (Modules 1–5) | Sessions, dual login, CSRF, rate limiting, threads, replies, bookmarks, profiles and moderation |
-| 11 | Testing | ⚠️ Partial | PHP lint passed; Modules 1–5 flows tested against MySQL; no automated test suite |
+| 8 | Backend / API implementation | ✅ Done (Modules 1–6) | `auth.php`, `index.php`, `thread.php`, `profile.php` and `admin.php` implemented |
+| 9 | Frontend implementation | ✅ Done | All five PHP pages have working views plus the light/dark theme toggle |
+| 10 | Integration / auth implementation | ✅ Done (Modules 1–6) | Sessions, dual login, CSRF, rate limiting, threads, replies, bookmarks, profiles, moderation and theming |
+| 11 | Testing | ⚠️ Partial | PHP lint passed; Modules 1–6 flows tested against MySQL; no automated test suite |
 | 12 | Deployment | ⚠️ Partial | Laragon steps documented, not yet executed end-to-end |
 | 13 | Documentation / presentation | ⚠️ Mostly | README + ARCHITECTURE + viva guide done; missing report, ER diagram, screenshots, demo |
 
@@ -111,13 +111,13 @@ The spec drift has been settled. `ARCHITECTURE.md` is now the single source of t
 
 ## 4. Module-by-Module Status
 
-The foundation and Modules 1–5 are implemented; only the Module 6 theme polish is outstanding.
+The foundation and all six feature modules are implemented.
 
 ### Frontend prototype
 
 | Unit | File(s) | Scope | Status |
 |---|---|---|---|
-| Shared stylesheet | `assets/css/style.css` | Green/cream theme, login/register/thread/profile sections, active-board and form-message states, mobile breakpoint | ✅ Done |
+| Shared stylesheet | `assets/css/style.css` | Green/cream light theme and dark theme via CSS variables, login/register/thread/profile sections, active-board and form-message states, action-link colours, mobile breakpoint | ✅ Done |
 | Auth UI | `auth.php` views | Dual login, username signup, token generation, one-time token reveal | ✅ Done |
 | Feed UI | `index.php` views | Board cards, new-thread form, search/sort bar, thread cards | ✅ Done |
 | Thread UI | `thread.php` views | Parent thread, replies, reply form, edit/delete, bookmark/report controls | ✅ Done |
@@ -130,7 +130,7 @@ The foundation and Modules 1–5 are implemented; only the Module 6 theme polish
 |---|---|---|---|
 | DB connection | `config/db.php` | Hardened session cookie, CSRF seed, env-based `APP_SECRET`, PDO to `threadzero`, `utf8mb4`, exception mode, `FETCH_ASSOC`, generic error page | ✅ Done |
 | Helpers | `config/functions.php` | `isLoggedIn()`, `isMod()`, `csrfField()`, `verifyCsrfToken()`, `renderAuthorBadge($post, $parentThread)`, `formatPostBody($text)` | ✅ Done |
-| Layout partials | `includes/header.php`, `includes/footer.php` | Shared `<head>`, navbar, POST logout + CSRF, footer | ✅ Done |
+| Layout partials | `includes/header.php`, `includes/footer.php` | Shared `<head>`, pre-paint theme script, navbar, POST logout + CSRF, theme toggle, footer | ✅ Done |
 | Data layer | `sql/schema.sql`, `sql/seed.sql` | 4 tables + default boards done; demo threads/users still pending | ⚠️ Schema done, seed missing |
 
 ### Feature modules
@@ -142,7 +142,7 @@ The foundation and Modules 1–5 are implemented; only the Module 6 theme polish
 | 3. Core Thread & Reply Engine | `thread.php` | Parent + replies; post numbers (#1001…); Bump vs. Sage; `>greentext`; `>>ID` anchors; author edit/delete; bookmark toggle; report; locked-thread handling | ✅ Done |
 | 4. User Dashboard & Bookmarks | `profile.php` | Edit bio; own post history (incl. anonymous threads); saved bookmarks with remove; POST → redirect → GET | ✅ Done |
 | 5. Trust, Safety & Moderation Suite | `admin.php` | Mod-only (`isMod()`); 403 guard; queue `WHERE is_reported = 1`; unflag, pin/unpin, lock/unlock, delete; replies resolve to their parent thread | ✅ Done |
-| 6. UI Theme & Client-Side Polish | `assets/css/style.css`, `assets/js/app.js` | Light/dark via CSS variables + `localStorage`; click-to-quote; min-length check; delete `confirm()` | ⚠️ Quote helper + delete confirm done; dark mode and theme toggle pending |
+| 6. UI Theme & Client-Side Polish | `assets/css/style.css`, `assets/js/app.js` | Light/dark via CSS variables + `localStorage`; pre-paint theme script; click-to-quote; live character counters; min-length check; delete `confirm()` | ✅ Done |
 
 ---
 
@@ -160,11 +160,11 @@ The foundation and Modules 1–5 are implemented; only the Module 6 theme polish
 - **Directory layout:** `assets/{css,js,uploads}`, `config/`, `includes/`, `sql/`, with the `.php` page routes at the root. No static HTML routes remain.
 - **Image uploads:** extension whitelist plus `getimagesize()` MIME validation, 2 MB limit, random filenames, and a no-script `.htaccess` in `assets/uploads/`.
 - **Shared helpers, not copy-paste:** `renderAuthorBadge()` and `formatPostBody()` live once in `config/functions.php`; `csrfField()` and `verifyCsrfToken()` live there too; navbar/footer live in `includes/`.
-- **Theme names:** Retro Light (Yotsuba) and Modern Dark (Tomorrow) — planned for Module 6; the merged stylesheet currently ships one green/cream light theme.
+- **Theme names:** Retro Light (Yotsuba) and Modern Dark (Tomorrow) — implemented in Module 6 with `data-theme="dark"` on `<html>`, CSS custom properties and a `localStorage` preference.
 - **Token security (strong version):** the plaintext token is shown once; the DB stores `token_lookup = HMAC-SHA256(token, APP_SECRET)` for indexed lookup plus `password_hash(token)` for verification. Login runs `password_verify()` before `session_regenerate_id(true)`. `APP_SECRET` comes from `THREADZERO_APP_SECRET` with a dev fallback.
 - **Token display:** POST → redirect → GET; the token lives in the session for exactly one render, then is deleted. `Cache-Control: no-store` keeps it out of browser caches.
 - **Privacy hardening:** generic login errors, `HttpOnly`/`SameSite`/HTTPS-aware cookies, CSRF token on every `POST`, no email or IP logging, and all output escaped with `htmlspecialchars()`.
-- **Styling:** one hand-written stylesheet (`assets/css/style.css`) with a shared green/cream theme, per-page sections and a mobile breakpoint. No Tailwind, no Bootstrap, no build step.
+- **Styling:** one hand-written stylesheet (`assets/css/style.css`) with a shared light theme, a `data-theme="dark"` override layer, per-page sections and a mobile breakpoint. No Tailwind, no Bootstrap, no build step.
 - **Form contract:** every POST form posts a hidden `action` plus a CSRF token; field names and redirect rules are standardised in `ARCHITECTURE.md` §4.1.
 - **Docs:** `ARCHITECTURE.md` is the single source of truth; `PROJECT_SPEC.md` is retired intentionally.
 - **Code style for viva safety:** flat procedural PHP, PDO prepared statements with `?`, native `$_SESSION`, plain Vanilla JS, no JS frameworks, no mandatory build step, commented SQL blocks.
@@ -203,7 +203,7 @@ The foundation and Modules 1–5 are implemented; only the Module 6 theme polish
 - [x] Module 5: `admin.php` — mod queue (`is_reported`), pin/lock/unflag/delete
 
 ### Stage 3 — Polish, Testing & Viva Prep (Days 11–15)
-- [ ] Module 6: theme switcher; quote helper, min-length checks and delete confirm are done
+- [x] Module 6: light/dark theme switcher, live character counters and minimum-length checks (quote helper and delete confirm already done)
 - [ ] Seed realistic threads across all 4 boards
 - [ ] Test plan + evidence (auth, CRUD, permissions, cascade delete, anonymity masking)
 - [ ] Security checks: token never stored/displayed after signup, rate limiting, CSRF rejection, generic login errors
@@ -215,10 +215,10 @@ The foundation and Modules 1–5 are implemented; only the Module 6 theme polish
 
 ## 7. Immediate Next Steps (Priority Order)
 
-1. **Build Module 6 (`assets/js/app.js`):** theme toggle plus the remaining client-side polish.
-2. **Write `sql/seed.sql`** with demo users and sample threads across the four boards so the app has content to demo.
-3. **Run the full manual test pass** and capture screenshots for the report.
-4. **Produce the ER diagram** and rehearse the viva walkthrough.
+1. **Write `sql/seed.sql`** with demo users and sample threads across the four boards so the app has content to demo.
+2. **Run the full manual test pass** and capture screenshots for the report.
+3. **Produce the ER diagram** and rehearse the viva walkthrough.
+4. **Execute the Laragon deployment steps end-to-end** and record the evidence.
 
 ---
 
@@ -230,8 +230,8 @@ The foundation and Modules 1–5 are implemented; only the Module 6 theme polish
 | 16-digit token ≈ 53 bits of entropy | Online guessing if login is unthrottled | Enforce the `sleep()` delay + failed-attempt limit; never log tokens |
 | Users may assume "anonymous" means untraceable | Privacy promise overstated in the viva | Document clearly: `user_id` is stored, so it is pseudonymity, not untraceability |
 | User-uploaded images | Malicious files or script execution from `assets/uploads/` | Extension + `getimagesize()` MIME checks, 2 MB cap, random filenames, and a no-script `.htaccess` |
-| Remaining modules due with a 10–15 day plan | No slack for debugging | Finish Module 6 next; keep the schema and helpers stable |
-| 6 modules, 5 people | Module 6 + shared partials unowned | Assign frontend devs to Module 6 and the `includes/` partials |
+| Presentation artefacts still due | No screenshots or ER diagram for the report | Finish `seed.sql`, capture screenshots and draw the ER diagram before the viva |
+| Module ownership spread across 5 people | Handover gaps during the viva | Keep `ARCHITECTURE.md` §6 ownership list current and rehearse each demo task |
 | No tests planned | Anonymity and permission bugs are subtle and high-risk | Explicitly test author-edit, OP masking, cascade delete, CSRF rejection |
 
 ---
@@ -257,3 +257,4 @@ The foundation and Modules 1–5 are implemented; only the Module 6 theme polish
 | 4 Nov 2026 | Implemented Module 2 in `index.php`: board feed, search, sort, pinned-first ordering, new-thread form and validated image uploads. Added a read-only `thread.php` with OP masking and greentext, removed `index.html`, and updated the docs. Tested auth, thread creation, search, uploads, masking and 404 handling against MySQL. |
 | 4 Nov 2026 | Completed Module 3 in `thread.php`: replies with Bump/Sage, validated reply image uploads, inline edit/delete, moderator delete, bookmark toggle, reporting and locked-thread handling. Added `assets/js/app.js` (`quotePost()`), wired it into the header, added `.form-success`, removed the now-redundant `thread.html`, and updated the docs. Tested the full thread lifecycle against MySQL. |
 | 5 Nov 2026 | Completed Modules 4–5: `profile.php` (bio editor, post/reply history, saved bookmarks with remove) and `admin.php` (403 guard, reported queue, unflag, pin/unpin, lock/unlock, delete). Standardised moderation forms on `action`, resolved pin/lock to parent threads, added POST → redirect → GET flash messages and shared form-message classes, removed the last static prototype (`profile.html`), and updated the docs. Tested both modules against MySQL. |
+| 5 Nov 2026 | Completed Module 6: light/dark theme engine with CSS variables, `data-theme` and a pre-paint `localStorage` script in `includes/header.php`, plus live character counters and minimum-length form checks in `assets/js/app.js`. Added dark-mode styling for cards, inputs, tables, badges, form messages and action links, kept `quotePost()` in sync with the counter, and allowed an empty bio to be saved. Verified both themes, persistence and the JS helpers in the browser. |

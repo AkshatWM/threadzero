@@ -16,7 +16,7 @@ Whether a human teammate or an AI agent writes code for this repository, it **MU
    - Write **flat, top-to-bottom procedural PHP** and **plain Vanilla JS** with self-explanatory variable names (`$thread_id`, `$is_anon`, `$search_query`).
    - Write every SQL query string directly above the `$pdo->prepare()` line where it runs.
 2. **Strict Tech Stack:**
-   - **Frontend:** Semantic HTML5 and **one hand-written stylesheet** (`assets/css/style.css`) built with Flexbox and media queries; Module 6 adds CSS variables for the light/dark theme. **Vanilla JavaScript** (ES6 DOM manipulation). No Tailwind, Bootstrap, React or Vue, and no CSS/JS build step.
+   - **Frontend:** Semantic HTML5 and **one hand-written stylesheet** (`assets/css/style.css`) built with Flexbox and media queries; CSS custom properties provide the light/dark themes. **Vanilla JavaScript** (ES6 DOM manipulation). No Tailwind, Bootstrap, React or Vue, and no CSS/JS build step.
    - **Backend:** PHP 8.x using `PDO` prepared statements (`?` placeholders) and native `$_SESSION`.
    - **Database:** MySQL / MariaDB (Strictly **4 normalized tables**: `users`, `boards`, `posts`, `bookmarks`).
 3. **Viva-Ready Comments:**
@@ -52,6 +52,8 @@ When extending a page:
 3. Add a hidden `action` input to every `POST` form (values in §4.1) and call `csrfField()`.
 4. Do not add a second stylesheet or a framework; extend `assets/css/style.css` instead.
 5. Keep client-side helpers in `assets/js/app.js`; there is no build step.
+
+**Theming.** The light theme is the default. `toggleTheme()` sets `data-theme="dark"` on the `<html>` element and saves the choice in `localStorage`; an inline script in `includes/header.php` re-applies it before first paint so there is no white flash. All colours live in CSS custom properties at the end of `style.css`, with `html[data-theme="dark"]` overrides for cards, inputs, tables, badges, form messages and inline action links.
 
 ---
 
@@ -328,6 +330,14 @@ Any developer can pick up and build one of these self-contained modules:
 * Successful actions use POST → redirect → GET with a one-shot session flash.
 
 
+* **Module 6: `assets/js/app.js` + `assets/css/style.css` (Theme & Client-Side Polish)**
+* `toggleTheme()` flips the `data-theme="dark"` attribute on `<html>`, updates the navbar button label/ARIA state, and stores the choice in `localStorage`.
+* A small inline script in `includes/header.php` applies the saved theme before first paint, preventing a white flash on reload.
+* Dark mode uses CSS custom properties (`--bg`, `--card-bg`, `--text-main`, `--border-color`, …) plus `html[data-theme="dark"]` overrides for cards, inputs, tables, badges, form messages and inline action links.
+* `quotePost()` appends `>>ID` to the reply box and dispatches an `input` event so the live character counter stays in sync.
+* Live character counters are attached to `textarea[name="content"]` and `textarea[name="bio"]`; thread/reply forms are blocked client-side when the trimmed content is shorter than 2 characters.
+
+
 
 ---
 
@@ -335,7 +345,7 @@ Any developer can pick up and build one of these self-contained modules:
 
 ### A. Frontend Developers (2 Members — `assets/css/style.css`, `assets/js/app.js`, `includes/header.php`)
 
-* **Know how to explain:** How `assets/css/style.css` is organised (one commented section per page plus shared `.badge-anon`, `.badge-user`, `.greentext` and `.quote-link` helpers), Flexbox layout, the mobile `@media (max-width: 600px)` block, HTML form `method="POST"` and `enctype="multipart/form-data"`, and how each `.html` prototype maps to its `.php` page.
+* **Know how to explain:** How `assets/css/style.css` is organised (one commented section per page plus shared `.badge-anon`, `.badge-user`, `.greentext`, `.quote-link` and theme helpers), Flexbox layout, the mobile `@media (max-width: 600px)` block, how CSS custom properties plus `data-theme`/`localStorage` drive dark mode, HTML form `method="POST"` and `enctype="multipart/form-data"`, and how `includes/header.php`/`includes/footer.php` wrap every page.
 * **Practice live changes:** Change a theme colour, move the navbar, add a minimum character length check in JS, or add a `confirm()` dialog on delete buttons.
 
 ### B. Backend Developers (2 Members — `auth.php`, `index.php`, `thread.php`, `profile.php`, `admin.php`)
