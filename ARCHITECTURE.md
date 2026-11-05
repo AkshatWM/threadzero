@@ -42,21 +42,16 @@ Designed to allow open discussion while preventing anonymous harassment in the c
 - **Bump vs. Sage:** Posting a reply updates the parent thread's `bumped_at = NOW()` so active discussions rise to the top—unless the user checks `Sage (Do not bump)`.
 - **Text Formatting:** Lines starting with `>` render in green (`.greentext`). Typing `>>1002` creates a clickable link (`#p1002`) that jumps to post `#1002`.
 
-### D. Static Frontend Prototype (`*.html` + `assets/css/style.css`)
-One static design page remains after `login.html`, `register.html`, `index.html` and `thread.html` were folded into the PHP pages:
+### D. Frontend (`assets/css/style.css` + `assets/js/app.js`)
 
-| Prototype | Becomes |
-|---|---|
-| `profile.html` | `profile.php` (placeholder shell) |
+All original HTML prototypes (`login.html`, `register.html`, `index.html`, `thread.html`, `profile.html`) have now been folded into their PHP pages, so there are **no static `.html` routes left**. The production pages share one hand-written stylesheet (`assets/css/style.css`) and one small script (`assets/js/app.js`).
 
-These `.html` files are **design references, not production routes**. They share `assets/css/style.css` and already use the final class names (`.badge-anon`, `.badge-user`, `.greentext`, `.quote-link`, `.thread-post`, `.reply-box`). When a page is converted to PHP, keep the same markup and class names, then replace the hard-coded sample content with database queries.
-
-Rules for converting a prototype:
-1. Copy the markup into the `.php` file and include `config/db.php`, `config/functions.php`, `includes/header.php`, `includes/footer.php`.
-2. Keep the visible design, but replace every static post, user and board with `htmlspecialchars()` output from PDO queries.
+When extending a page:
+1. Include `config/db.php`, `config/functions.php`, `includes/header.php` and `includes/footer.php`.
+2. Render every user string through `htmlspecialchars()` and every query through PDO `?` placeholders.
 3. Add a hidden `action` input to every `POST` form (values in §4.1) and call `csrfField()`.
 4. Do not add a second stylesheet or a framework; extend `assets/css/style.css` instead.
-5. `admin.php` has no static prototype yet — build it from the Module 5 spec.
+5. Keep client-side helpers in `assets/js/app.js`; there is no build step.
 
 ---
 
@@ -154,7 +149,7 @@ These rules protect the token-login and anonymity model. Do not skip them "to sa
 
 ## 4. Core Shared Code (`config/db.php` & `config/functions.php`)
 
-Every root page (`index.php`, `thread.php`, `auth.php`, `profile.php`, `admin.php`) includes these two files at the top. The static `.html` prototypes do not — they are design references only.
+Every root page (`index.php`, `thread.php`, `auth.php`, `profile.php`, `admin.php`) includes these two files at the top. There are no static `.html` routes any more.
 
 ### `config/db.php`
 
@@ -270,7 +265,7 @@ The static prototypes already use these names. Do not invent new ones; the PHP p
 | Toggle bookmark | `toggle_bookmark` | none |
 | Report post | `report_post` | `post_id` |
 | Update bio | `update_bio` | `bio` |
-| Moderation | `unflag`, `pin`, `lock`, `delete` | `post_id` |
+| Moderation | `unflag`, `toggle_pin`, `toggle_lock`, `delete_post` | `post_id` |
 
 **GET field names:** `search`, `sort` (`bumped` or `newest`), `board` (slug), `id` (thread), `edit` (post being edited), `page` (future).
 
@@ -320,14 +315,17 @@ Any developer can pick up and build one of these self-contained modules:
 
 
 * **Module 4: `profile.php` (User Dashboard)**
-* Form to update `bio` (`UPDATE users SET bio = ? WHERE id = ?`).
+* Form to update `bio` (`UPDATE users SET bio = ? WHERE id = ?`), limited to 255 characters.
 * Lists all threads/replies created by `$_SESSION['user_id']` (even anonymous ones).
 * Lists saved bookmarks (`SELECT ... FROM bookmarks JOIN posts`) with a Remove button (`DELETE FROM bookmarks`).
+* Successful updates use POST → redirect → GET with a one-shot session flash.
 
 
 * **Module 5: `admin.php` (Moderator Control Panel)**
-* Accessible when `isMod()` is true.
+* Accessible when `isMod()` is true; non-moderators receive a 403 page.
 * Shows an HTML `<table>` of flagged posts (`WHERE is_reported = 1`) and threads, with form buttons to **Approve/Unflag** (`SET is_reported = 0`), **Pin/Unpin** (`SET is_pinned = NOT is_pinned`), **Lock/Unlock** (`SET is_locked = NOT is_locked`), or **Delete** (`DELETE FROM posts WHERE id = ?`).
+* Pin and lock always resolve to the parent thread, so acting on a reported reply still affects its thread.
+* Successful actions use POST → redirect → GET with a one-shot session flash.
 
 
 

@@ -1,7 +1,7 @@
 # ThreadZero ⚡
 
 > **Status:** 🚧 Active Development (MVP Phase)
-> **Current build:** Modules 1–3 are implemented (dual authentication, board feed, thread creation, replies with bump/sage, edit/delete, bookmarks and reporting). The profile and moderation modules are still pending — see [`PROGRESS.md`](./PROGRESS.md).
+> **Current build:** Modules 1–5 are implemented (dual authentication, board feed, thread engine, profile/bookmarks and the moderation panel). Only the Module 6 theme toggle and final polish remain — see [`PROGRESS.md`](./PROGRESS.md).
 > **Architecture & Developer Guide:** See [`ARCHITECTURE.md`](./ARCHITECTURE.md) for the full system specification, database schema, and module guidelines.
 
 **ThreadZero** is a privacy-first hybrid discussion board and imageboard engine built with **PHP 8 (PDO)**, **MySQL**, **HTML5/CSS3**, and **Vanilla JavaScript**. It combines the structured community boards of Reddit, the fast minimalist thread mechanics of 4chan/Hacker News, and the zero-knowledge authentication model of Mullvad VPN.
@@ -57,9 +57,8 @@ threadzero/
 ├── index.php                # Board feed, search, sort & new-thread form
 ├── thread.php               # Thread view: replies, bump/sage, edit/delete, bookmark, report
 ├── auth.php                 # Dual login/signup + 16-digit token generator
-├── profile.php              # Placeholder shell (Module 4 pending)
-├── admin.php                # Mod-only placeholder shell (Module 5 pending)
-├── profile.html             # Static prototype: bio, posts & bookmarks
+├── profile.php              # Profile: bio editor, post history & saved bookmarks
+├── admin.php                # Mod panel: reported queue, pin/lock, delete
 ├── ARCHITECTURE.md          # Full technical spec for devs & AI assistants
 ├── README.md                # Project overview & setup instructions
 └── PROGRESS.md              # Live build tracker & module completion log
@@ -90,22 +89,22 @@ C:\laragon\bin\mysql\mysql-8.4.3-winx64\bin\mysql.exe -u root -e "source C:/lara
 6. **Launch the app:**
    Visit [`http://localhost/threadzero/`](http://localhost/threadzero/) — the landing page is `index.php`. Authentication lives at [`http://localhost/threadzero/auth.php`](http://localhost/threadzero/auth.php).
 
-> **Frontend note:** The remaining `.html` files are static design references. The production app is the `.php` set, which reuses the same markup and `assets/css/style.css`. There is no CSS framework, no `npm install`, and no build step.
+> **Frontend note:** All pages are production `.php` routes sharing `assets/css/style.css` and `assets/js/app.js`. No static HTML prototypes remain, and there is no CSS framework, no `npm install`, and no build step.
 
 ---
 
 ## 📋 Development Roadmap
 
 - [x] Architecture & 4-Table Schema Design (`ARCHITECTURE.md`)
-- [x] Static frontend prototypes (1 remaining HTML page + `assets/css/style.css`)
+- [x] Static frontend prototypes (all folded into the PHP pages + `assets/css/style.css`)
 - [x] Database schema: `sql/schema.sql` (4 tables + default boards)
 - [x] Core config & shared partials (`config/`, `includes/`)
 - [x] Module 1: Dual Authentication & 16-Digit Token Generator (`auth.php`)
 - [x] Module 2: Board Feed, Search, Sort & Thread Creation (`index.php`)
 - [ ] Demo data: `sql/seed.sql`
 - [x] Module 3: Thread Replies, Bump/Sage, Edit/Delete, Bookmarks & Reporting (`thread.php`)
-- [ ] Module 4: User Profile & Bookmarks (`profile.php` — placeholder only)
-- [ ] Module 5: Moderation & Reporting Dashboard (`admin.php` — placeholder only)
+- [x] Module 4: User Profile, Post History & Bookmarks (`profile.php`)
+- [x] Module 5: Moderation & Reporting Dashboard (`admin.php`)
 - [ ] Module 6: Theme toggle and remaining client-side polish (`assets/js/app.js` — quote helper done)
 
 ---
