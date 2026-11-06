@@ -11,18 +11,18 @@
 
 > **"All six modules and the demo dataset are done; viva artefacts remain."**
 
-Modules 1–6 are implemented: dual authentication (`auth.php`), the 4-table schema (`sql/schema.sql`), the PDO/session layer (`config/db.php`), shared helpers (`config/functions.php`), the layout partials (`includes/`), the board feed (`index.php`), the full thread engine (`thread.php`), the profile dashboard (`profile.php`), the moderator panel (`admin.php`) and the light/dark theme engine (`assets/css/style.css` + `assets/js/app.js`). `sql/seed.sql` adds four demo accounts, six threads, seven replies, five bookmarks and two reported posts. The remaining work is the ER diagram, screenshots and deployment evidence.
+Modules 1–6 are implemented: dual authentication (`auth.php`), the 4-table schema (`sql/schema.sql`), the PDO/session layer (`config/db.php`), shared helpers (`config/functions.php`), the layout partials (`includes/`), the board feed (`index.php`), the full thread engine (`thread.php`), the profile dashboard (`profile.php`), the moderator panel (`admin.php`) and the light/dark theme engine (`assets/css/style.css` + `assets/js/app.js`). `sql/seed.sql` adds four demo accounts, six threads, seven replies, five bookmarks and two reported posts. The ER diagram (§3.3) and system request-flow diagram (§5.1) are in `ARCHITECTURE.md`. The remaining work is screenshots and deployment evidence.
 
 | Area | Completion |
 |---|---|
 | Planning / requirements | ~95% |
-| Design / architecture | ~95% |
+| Design / architecture | ~100% |
 | Implementation | **~95%** (Modules 1–6 + foundation + demo seed) |
 | Testing / deployment | **~60%** (Modules 1–6 and the seed tested against MySQL) |
-| Documentation / viva prep | ~85% |
-| **Overall project process** | **~88%** |
+| Documentation / viva prep | ~90% |
+| **Overall project process** | **~90%** |
 
-**Verdict:** every feature module and the demo dataset are complete and tested; only presentation artefacts remain.
+**Verdict:** every feature module, the demo dataset and the architecture diagrams are complete and tested; only screenshots and deployment evidence remain.
 
 ---
 
@@ -32,8 +32,8 @@ Modules 1–6 are implemented: dual authentication (`auth.php`), the 4-table sch
 
 | File / Folder | Size | Status | Notes |
 |---|---|---|---|
-| `README.md` | 8,156 bytes | ✅ Complete | Overview, current build status, feature list, project tree, Laragon setup, demo accounts, roadmap |
-| `ARCHITECTURE.md` | 24,665 bytes | ✅ Complete | Coding rules, 4-table schema, privacy rules, form/session conventions, shared helpers, module specs, viva checklist |
+| `README.md` | 8,221 bytes | ✅ Complete | Overview, current build status, feature list, project tree, Laragon setup, demo accounts, roadmap |
+| `ARCHITECTURE.md` | 28,994 bytes | ✅ Complete | Coding rules, 4-table schema, ER diagram, privacy rules, form/session conventions, shared helpers, module specs, request-flow diagram, viva checklist |
 | `PROGRESS.md` | this file | ✅ Live | Progress tracker |
 | `.gitignore` | 42 bytes | ✅ Present | Ignores `.docx`, `.pdf`, editor folders |
 | `assets/css/style.css` | 19,503 bytes | ✅ Complete | Shared stylesheet for every page; light/dark theme variables, page sections, active-board and form-message states, action-link colours, mobile breakpoint |
@@ -52,7 +52,7 @@ Modules 1–6 are implemented: dual authentication (`auth.php`), the 4-table sch
 | `assets/js/app.js` | 2,973 bytes | ✅ Module 6 complete | Quote helper, theme toggle with `localStorage`, live character counters, minimum-length checks |
 | Git repo | ✅ Active | PR #1 merged as `a56d7ad`; Module 1 `99279fd`; Module 2 `90b951b`; Module 3 `130a329`; Modules 4–5 `aa7b8ed`; Module 6 `fd18979`; seed data in the current commit |
 
-**Still to build:** the ER diagram image, screenshots and deployment evidence.
+**Still to build:** screenshots and deployment evidence.
 
 > ✅ All static HTML prototypes (`index.html`, `thread.html`, `profile.html`, `login.html`, `register.html`) have been removed now that their PHP pages are real.
 
@@ -96,16 +96,16 @@ The spec drift has been settled. `ARCHITECTURE.md` is now the single source of t
 | 1 | Idea / topic selection | ✅ Done | ThreadZero clearly defined |
 | 2 | Problem statement & requirements | ✅ Done | 6 modules, dual auth, asymmetric anonymity, bump/sage, moderation |
 | 3 | Tech stack | ✅ Done | HTML5 / custom CSS3 / Vanilla JS, PHP 8 + PDO, MySQL |
-| 4 | Database design / ER schema | ⚠️ Mostly | 4 tables implemented in `sql/schema.sql` with FKs, `ON DELETE CASCADE`, unique keys and `AUTO_INCREMENT = 1001`; **no ER diagram image** |
+| 4 | Database design / ER schema | ✅ Done | 4 tables implemented in `sql/schema.sql` with FKs, `ON DELETE CASCADE`, unique keys and `AUTO_INCREMENT = 1001`; ER diagram in `ARCHITECTURE.md` §3.3 |
 | 5 | Wireframes / UI flow | ✅ Done | All static prototypes were converted into the real PHP pages; shared stylesheet retained |
-| 6 | Architecture diagram | ⚠️ Partly | Folder architecture, shared helpers, and module boundaries documented in prose; **no diagram** |
+| 6 | Architecture diagram | ✅ Done | ER and system request-flow diagrams in `ARCHITECTURE.md` §3.3 and §5.1 (Mermaid) |
 | 7 | Environment / repo setup | ✅ Done | Git repo, `.gitignore`, Laragon setup documented; `config/`, `includes/`, `sql/` tracked |
 | 8 | Backend / API implementation | ✅ Done (Modules 1–6) | `auth.php`, `index.php`, `thread.php`, `profile.php` and `admin.php` implemented |
 | 9 | Frontend implementation | ✅ Done | All five PHP pages have working views plus the light/dark theme toggle |
 | 10 | Integration / auth implementation | ✅ Done (Modules 1–6) | Sessions, dual login, CSRF, rate limiting, threads, replies, bookmarks, profiles, moderation and theming |
 | 11 | Testing | ⚠️ Partial | PHP lint passed; Modules 1–6 flows tested against MySQL; no automated test suite |
 | 12 | Deployment | ⚠️ Partial | Laragon steps documented, not yet executed end-to-end |
-| 13 | Documentation / presentation | ⚠️ Mostly | README + ARCHITECTURE + viva guide done; missing report, ER diagram, screenshots, demo |
+| 13 | Documentation / presentation | ⚠️ Mostly | README + ARCHITECTURE + ER/request-flow diagrams + viva guide done; missing report, screenshots and deployment evidence |
 
 ---
 
@@ -208,7 +208,8 @@ The foundation and all six feature modules are implemented.
 - [ ] Test plan + evidence (auth, CRUD, permissions, cascade delete, anonymity masking)
 - [ ] Security checks: token never stored/displayed after signup, rate limiting, CSRF rejection, generic login errors
 - [ ] Deployment (Laragon steps executed end-to-end)
-- [ ] README screenshots + ER diagram
+- [x] ER + system request-flow diagrams in `ARCHITECTURE.md` (§3.3 and §5.1)
+- [ ] README screenshots
 - [ ] Rehearse live-modification tasks from `ARCHITECTURE.md` §6
 
 ---
@@ -216,7 +217,7 @@ The foundation and all six feature modules are implemented.
 ## 7. Immediate Next Steps (Priority Order)
 
 1. **Run the full manual test pass** and capture screenshots for the report.
-2. **Produce the ER diagram** and rehearse the viva walkthrough.
+2. **Rehearse the viva walkthrough** using the ER (§3.3) and request-flow (§5.1) diagrams.
 3. **Execute the Laragon deployment steps end-to-end** and record the evidence.
 
 ---
@@ -229,7 +230,7 @@ The foundation and all six feature modules are implemented.
 | 16-digit token ≈ 53 bits of entropy | Online guessing if login is unthrottled | Enforce the `sleep()` delay + failed-attempt limit; never log tokens |
 | Users may assume "anonymous" means untraceable | Privacy promise overstated in the viva | Document clearly: `user_id` is stored, so it is pseudonymity, not untraceability |
 | User-uploaded images | Malicious files or script execution from `assets/uploads/` | Extension + `getimagesize()` MIME checks, 2 MB cap, random filenames, and a no-script `.htaccess` |
-| Presentation artefacts still due | No screenshots or ER diagram for the report | Capture screenshots and draw the ER diagram before the viva |
+| Presentation artefacts still due | No screenshots for the report | Capture screenshots before the viva |
 | Module ownership spread across 5 people | Handover gaps during the viva | Keep `ARCHITECTURE.md` §6 ownership list current and rehearse each demo task |
 | No tests planned | Anonymity and permission bugs are subtle and high-risk | Explicitly test author-edit, OP masking, cascade delete, CSRF rejection |
 
@@ -258,3 +259,4 @@ The foundation and all six feature modules are implemented.
 | 5 Nov 2026 | Completed Modules 4–5: `profile.php` (bio editor, post/reply history, saved bookmarks with remove) and `admin.php` (403 guard, reported queue, unflag, pin/unpin, lock/unlock, delete). Standardised moderation forms on `action`, resolved pin/lock to parent threads, added POST → redirect → GET flash messages and shared form-message classes, removed the last static prototype (`profile.html`), and updated the docs. Tested both modules against MySQL. |
 | 5 Nov 2026 | Completed Module 6: light/dark theme engine with CSS variables, `data-theme` and a pre-paint `localStorage` script in `includes/header.php`, plus live character counters and minimum-length form checks in `assets/js/app.js`. Added dark-mode styling for cards, inputs, tables, badges, form messages and action links, kept `quotePost()` in sync with the counter, and allowed an empty bio to be saved. Verified both themes, persistence and the JS helpers in the browser. |
 | 6 Nov 2026 | Added `sql/seed.sql`: four demo accounts, six threads across all four boards, seven replies (including OP masking and quote links), five bookmarks and two reported posts for the moderator queue. Replaced the invalid placeholder bcrypt hashes and token lookup with verified values, added `SET NAMES utf8mb4` for Windows client compatibility, documented the demo logins in `README.md`/`ARCHITECTURE.md`, and tested the schema + seed against MySQL and the running app. |
+| 6 Nov 2026 | Added Mermaid ER (§3.3) and system request-flow (§5.1) diagrams to `ARCHITECTURE.md`, validated both against the Mermaid renderer, and updated the README/PROGRESS status to show the architecture documentation complete. |

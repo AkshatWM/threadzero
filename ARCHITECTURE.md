@@ -153,6 +153,59 @@ These rules protect the token-login and anonymity model. Do not skip them "to sa
 9. **Rate-limit login.** After 5 failed attempts in one session, add a short `sleep()` delay and show a warning.
 10. **Be honest about anonymity.** `is_anon = 1` hides the author from other users, but `user_id` is still stored so the author can edit/delete and moderators can act. It is pseudonymity, not untraceability — say this clearly in the viva.
 
+### 3.3 Entity-Relationship (ER) Diagram
+
+The diagram below mirrors the DDL in `sql/schema.sql`, including the self-referencing `posts.parent_id` relationship that stores replies.
+
+```mermaid
+erDiagram
+    USERS ||--o{ POSTS : "authors (user_id)"
+    USERS ||--o{ BOOKMARKS : "saves (user_id)"
+    BOARDS ||--o{ POSTS : "contains (board_id)"
+    POSTS ||--o{ POSTS : "replies to (parent_id)"
+    POSTS ||--o{ BOOKMARKS : "bookmarked in (post_id)"
+
+    USERS {
+        int id PK "AUTO_INCREMENT"
+        varchar(50) username UK "Handle or Vault#XXXX"
+        varchar(255) password_hash "Bcrypt of password or token"
+        char(64) token_lookup UK "HMAC-SHA256(token, APP_SECRET)"
+        varchar(255) bio "Max 255 chars"
+        enum role "'user' or 'mod'"
+        timestamp created_at
+    }
+
+    BOARDS {
+        int id PK "AUTO_INCREMENT"
+        varchar(20) slug UK "tech, science, gaming, general"
+        varchar(100) title
+        varchar(255) description
+    }
+
+    POSTS {
+        int id PK "AUTO_INCREMENT = 1001"
+        int board_id FK "ON DELETE CASCADE"
+        int user_id FK "ON DELETE CASCADE"
+        int parent_id FK "NULL = Thread, ID = Reply"
+        varchar(150) title "NULL for replies"
+        text content "Supports >greentext & >>quotes"
+        varchar(255) image_path "Optional upload path"
+        tinyint(1) is_anon "1 = Masked as Anonymous [OP]"
+        tinyint(1) is_pinned "1 = Pinned to board top"
+        tinyint(1) is_locked "1 = Replies disabled"
+        tinyint(1) is_reported "1 = In Mod Queue"
+        timestamp bumped_at "Updated on non-Sage reply"
+        timestamp created_at
+    }
+
+    BOOKMARKS {
+        int id PK "AUTO_INCREMENT"
+        int user_id FK "ON DELETE CASCADE"
+        int post_id FK "ON DELETE CASCADE"
+        timestamp created_at
+    }
+```
+
 ---
 
 ## 4. Core Shared Code (`config/db.php` & `config/functions.php`)
@@ -343,7 +396,43 @@ Any developer can pick up and build one of these self-contained modules:
 * `quotePost()` appends `>>ID` to the reply box and dispatches an `input` event so the live character counter stays in sync.
 * Live character counters are attached to `textarea[name="content"]` and `textarea[name="bio"]`; thread/reply forms are blocked client-side when the trimmed content is shorter than 2 characters.
 
+### 5.1 System Architecture & Request Flow
 
+This diagram shows how a browser request moves through the root PHP controllers, the shared `config/` + `includes/` foundation, and the MySQL/upload storage layer.
+
+```mermaid
+flowchart TB
+    subgraph Client ["Browser (Client-Side)"]
+        UI["HTML5 Views + style.css (Light/Dark CSS Variables)"]
+        JS["assets/js/app.js (localStorage Theme, >>Quote, Char Counter)"]
+    end
+
+    subgraph Routes ["Root PHP Controllers (Procedural + PRG Pattern)"]
+        AUTH["auth.php (Module 1: Standard & 16-Digit Token Auth)"]
+        INDEX["index.php (Module 2: Board Feed, Search, New Thread)"]
+        THREAD["thread.php (Module 3: Replies, Bump/Sage, Edit/Delete)"]
+        PROFILE["profile.php (Module 4: Bio Update & Saved Bookmarks)"]
+        ADMIN["admin.php (Module 5: Mod Queue, Pin/Lock/Delete)"]
+    end
+
+    subgraph Core ["Shared Foundation (config/ & includes/)"]
+        HEADER["includes/header.php & footer.php"]
+        FUNC["config/functions.php (CSRF, renderAuthorBadge, formatPostBody)"]
+        DB["config/db.php (PDO Connection + Hardened $_SESSION)"]
+    end
+
+    subgraph Storage ["Persistence Layer"]
+        MYSQL[("MySQL: threadzero\n(users, boards, posts, bookmarks)")]
+        UPLOADS[("assets/uploads/\n(Validated Images + .htaccess)")]
+    end
+
+    Client <-->|"HTTP GET / POST (+CSRF)"| Routes
+    Routes --> HEADER
+    Routes --> FUNC
+    Routes --> DB
+    DB <-->|"PDO Prepared Statements (?)"| MYSQL
+    INDEX & THREAD -->|"MIME & Size Validated"| UPLOADS
+```
 
 ---
 
@@ -356,12 +445,12 @@ Any developer can pick up and build one of these self-contained modules:
 
 ### B. Backend Developers (2 Members — `auth.php`, `index.php`, `thread.php`, `profile.php`, `admin.php`)
 
-* **Know how to explain:** PHP `$_SESSION` lifecycle and `session_regenerate_id(true)` after login, PDO prepared statements (`?` placeholders) vs. SQL injection, how `random_int()` creates the 16-digit token, why the DB stores `token_lookup` (HMAC-SHA256 with `APP_SECRET`) and a `password_hash()` instead of the raw token, and how `renderAuthorBadge()` checks `$parentThread['is_anon']`.
+* **Know how to explain:** PHP `$_SESSION` lifecycle and `session_regenerate_id(true)` after login, PDO prepared statements (`?` placeholders) vs. SQL injection, how `random_int()` creates the 16-digit token, why the DB stores `token_lookup` (HMAC-SHA256 with `APP_SECRET`) and a `password_hash()` instead of the raw token, how `renderAuthorBadge()` checks `$parentThread['is_anon']`, and how a request moves from a root controller through `config/`/`includes/` to MySQL (see the request-flow diagram in §5.1).
 * **Practice live changes:** Adding a new field to the profile page, restricting an action to moderators only, or changing the `>greentext` regex character.
 
 ### C. Database Architect (1 Member — `schema.sql`, `seed.sql`, SQL Queries)
 
-* **Know how to explain:** Primary vs. Foreign Keys across the 4 tables, the self-referencing Foreign Key in `posts` (`parent_id` pointing to `posts.id`), how `ON DELETE CASCADE` cleans up replies and bookmarks automatically, why reports are a boolean flag (`posts.is_reported`) instead of a fifth table, and `JOIN` queries between `posts` and `users`.
+* **Know how to explain:** Primary vs. Foreign Keys across the 4 tables (see the ER diagram in §3.3), the self-referencing Foreign Key in `posts` (`parent_id` pointing to `posts.id`), how `ON DELETE CASCADE` cleans up replies and bookmarks automatically, why reports are a boolean flag (`posts.is_reported`) instead of a fifth table, and `JOIN` queries between `posts` and `users`.
 * **Practice live changes:** Running `GROUP BY` queries in phpMyAdmin to count posts per user, or adding a `views` column to `posts`.
 
 ---

@@ -1,7 +1,7 @@
 # ThreadZero ⚡
 
 > **Status:** 🚧 Active Development (MVP Phase)
-> **Current build:** All six modules are implemented (dual authentication, board feed, thread engine, profile/bookmarks, moderation panel and the light/dark theme toggle), and `sql/seed.sql` provides a ready-to-demo dataset. Remaining work is the ER diagram, screenshots and deployment evidence — see [`PROGRESS.md`](./PROGRESS.md).
+> **Current build:** All six modules are implemented (dual authentication, board feed, thread engine, profile/bookmarks, moderation panel and the light/dark theme toggle), and `sql/seed.sql` provides a ready-to-demo dataset. The ER and request-flow diagrams live in [`ARCHITECTURE.md`](./ARCHITECTURE.md). Remaining work is screenshots and deployment evidence — see [`PROGRESS.md`](./PROGRESS.md).
 > **Architecture & Developer Guide:** See [`ARCHITECTURE.md`](./ARCHITECTURE.md) for the full system specification, database schema, and module guidelines.
 
 **ThreadZero** is a privacy-first hybrid discussion board and imageboard engine built with **PHP 8 (PDO)**, **MySQL**, **HTML5/CSS3**, and **Vanilla JavaScript**. It combines the structured community boards of Reddit, the fast minimalist thread mechanics of 4chan/Hacker News, and the zero-knowledge authentication model of Mullvad VPN.
