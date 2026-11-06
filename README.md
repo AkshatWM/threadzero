@@ -1,7 +1,7 @@
 # ThreadZero ⚡
 
 > **Status:** 🚧 Active Development (MVP Phase)
-> **Current build:** All six modules are implemented (dual authentication, board feed, thread engine, profile/bookmarks, moderation panel and the light/dark theme toggle). Remaining work is demo data, the ER diagram and final screenshots — see [`PROGRESS.md`](./PROGRESS.md).
+> **Current build:** All six modules are implemented (dual authentication, board feed, thread engine, profile/bookmarks, moderation panel and the light/dark theme toggle), and `sql/seed.sql` provides a ready-to-demo dataset. Remaining work is the ER diagram, screenshots and deployment evidence — see [`PROGRESS.md`](./PROGRESS.md).
 > **Architecture & Developer Guide:** See [`ARCHITECTURE.md`](./ARCHITECTURE.md) for the full system specification, database schema, and module guidelines.
 
 **ThreadZero** is a privacy-first hybrid discussion board and imageboard engine built with **PHP 8 (PDO)**, **MySQL**, **HTML5/CSS3**, and **Vanilla JavaScript**. It combines the structured community boards of Reddit, the fast minimalist thread mechanics of 4chan/Hacker News, and the zero-knowledge authentication model of Mullvad VPN.
@@ -53,7 +53,7 @@ threadzero/
 │   └── footer.php           # Shared footer
 ├── sql/
 │   ├── schema.sql           # 4-table schema + default boards (re-runnable)
-│   └── seed.sql             # Demo users, threads and replies (pending)
+│   └── seed.sql             # Demo users, threads, replies, bookmarks & reports
 ├── index.php                # Board feed, search, sort & new-thread form
 ├── thread.php               # Thread view: replies, bump/sage, edit/delete, bookmark, report
 ├── auth.php                 # Dual login/signup + 16-digit token generator
@@ -75,18 +75,32 @@ C:\laragon\www\threadzero
 ```
 
 2. **Start Apache and MySQL** from the Laragon menu (or click **Start All**).
-3. **Create and seed the database.** Open **HeidiSQL** or **phpMyAdmin** from Laragon, then import/run [`sql/schema.sql`](./sql/schema.sql). It creates the `threadzero` database, the four tables and the four default boards.
+3. **Create and seed the database.** Open **HeidiSQL** or **phpMyAdmin** from Laragon, then import/run [`sql/schema.sql`](./sql/schema.sql) followed by [`sql/seed.sql`](./sql/seed.sql). The schema creates the `threadzero` database, the four tables and the four default boards; the seed rebuilds the demo dataset.
 
-   From a terminal you can run the same file with Laragon's MySQL client:
+   > **Warning:** `sql/seed.sql` truncates all four tables before inserting the demo rows. Run it only against a development database.
+
+   From a terminal you can run the same files with Laragon's MySQL client:
 
 ```powershell
 C:\laragon\bin\mysql\mysql-8.4.3-winx64\bin\mysql.exe -u root -e "source C:/laragon/www/threadzero/sql/schema.sql"
+C:\laragon\bin\mysql\mysql-8.4.3-winx64\bin\mysql.exe -u root -e "source C:/laragon/www/threadzero/sql/seed.sql"
 ```
 
-4. **Configure database credentials (if needed).**
+4. **Demo accounts.** The seed creates four accounts you can use immediately:
+
+| Account | Login | Role |
+| :--- | :--- | :--- |
+| `mod_arjun` | password `password123` | Moderator |
+| `priya_dev` | password `password123` | User |
+| `rohan_sec` | password `password123` | User |
+| `Vault#6154` | token `4829-1049-8372-6154` | User |
+
+   The token account's `token_lookup` is seeded with the development fallback `APP_SECRET` from `config/db.php`. If you set `THREADZERO_APP_SECRET` before seeding, regenerate that value (or create a fresh token account through the registration page).
+
+5. **Configure database credentials (if needed).**
    [`config/db.php`](./config/db.php) defaults to `host=localhost`, `user=root`, `pass=""`, which matches a stock Laragon install. Change it if your MySQL uses a password.
-5. **Set a real `APP_SECRET` before publishing.** Locally the code falls back to a development placeholder. For any shared or deployed copy, set the `THREADZERO_APP_SECRET` environment variable so token lookup hashes cannot be reproduced from the repository.
-6. **Launch the app:**
+6. **Set a real `APP_SECRET` before publishing.** Locally the code falls back to a development placeholder. For any shared or deployed copy, set the `THREADZERO_APP_SECRET` environment variable so token lookup hashes cannot be reproduced from the repository.
+7. **Launch the app:**
    Visit [`http://localhost/threadzero/`](http://localhost/threadzero/) — the landing page is `index.php`. Authentication lives at [`http://localhost/threadzero/auth.php`](http://localhost/threadzero/auth.php).
 
 > **Frontend note:** All pages are production `.php` routes sharing `assets/css/style.css` and `assets/js/app.js`. No static HTML prototypes remain, and there is no CSS framework, no `npm install`, and no build step.
@@ -101,7 +115,7 @@ C:\laragon\bin\mysql\mysql-8.4.3-winx64\bin\mysql.exe -u root -e "source C:/lara
 - [x] Core config & shared partials (`config/`, `includes/`)
 - [x] Module 1: Dual Authentication & 16-Digit Token Generator (`auth.php`)
 - [x] Module 2: Board Feed, Search, Sort & Thread Creation (`index.php`)
-- [ ] Demo data: `sql/seed.sql`
+- [x] Demo data: `sql/seed.sql` (4 users, 6 threads, 7 replies, bookmarks & reports)
 - [x] Module 3: Thread Replies, Bump/Sage, Edit/Delete, Bookmarks & Reporting (`thread.php`)
 - [x] Module 4: User Profile, Post History & Bookmarks (`profile.php`)
 - [x] Module 5: Moderation & Reporting Dashboard (`admin.php`)

@@ -132,7 +132,13 @@ INSERT IGNORE INTO boards (slug, title, description) VALUES
 
 ```
 
-### 3.1 Privacy & Security Rules (Non-Negotiable)
+### 3.1 Demo Seed Data (`sql/seed.sql`)
+
+`sql/seed.sql` rebuilds a complete demo dataset after `schema.sql`: four users (one moderator, three regular accounts and one token account), six threads across the four boards, seven replies, five bookmarks and two reported posts. It truncates all four tables first, so treat it as a development-only reset rather than a migration. The file starts with `SET NAMES utf8mb4` so the em dash in the sample text survives imports from clients whose default charset is a legacy Windows code page.
+
+Demo logins: `mod_arjun` / `password123` (moderator), `priya_dev` / `password123`, `rohan_sec` / `password123`, and `Vault#6154` with token `4829-1049-8372-6154`. The seeded `token_lookup` uses the development fallback `APP_SECRET` from `config/db.php`; regenerate it if `THREADZERO_APP_SECRET` is set.
+
+### 3.2 Privacy & Security Rules (Non-Negotiable)
 
 These rules protect the token-login and anonymity model. Do not skip them "to save time".
 
