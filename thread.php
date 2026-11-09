@@ -115,6 +115,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         ]);
                         $new_reply_id = $pdo->lastInsertId();
 
+                        // Create notification for the thread owner
+                        $thread_owner_id = (int)$thread['user_id'];
+                        
+                        if ((int)$current_user_id !== $thread_owner_id) {
+                        
+                            $notify_sql = "INSERT INTO notifications
+                                           (recipient_id, actor_id, post_id, thread_id, type)
+                                           VALUES (?, ?, ?, ?, 'reply')";
+                        
+                            $notify_stmt = $pdo->prepare($notify_sql);
+                        
+                            $notify_stmt->execute([
+                                $thread_owner_id,
+                                $current_user_id,
+                                (int)$new_reply_id,
+                                (int)$thread_id
+                            ]);
+                        }
+
                         // [SQL UPDATE] Bump parent thread to top of board unless Sage is checked
                         if ($is_sage === 0) {
                             $bump_sql = "UPDATE posts SET bumped_at = NOW() WHERE id = ?";
