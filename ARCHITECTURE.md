@@ -167,7 +167,7 @@ INSERT IGNORE INTO boards (slug, title, description) VALUES
 
 ### 3.1 Demo Seed Data (`sql/seed.sql`)
 
-`sql/seed.sql` rebuilds a complete demo dataset after `schema.sql`: four users (one moderator, three regular accounts and one token account), six threads across the four boards, seven replies, five bookmarks and two reported posts. It truncates all four tables first, so treat it as a development-only reset rather than a migration. The file starts with `SET NAMES utf8mb4` so the em dash in the sample text survives imports from clients whose default charset is a legacy Windows code page.
+`sql/seed.sql` rebuilds a complete demo dataset after `schema.sql`: four users (one moderator, three regular accounts and one token account), six threads across the four boards, seven replies, five bookmarks and two reported posts. It truncates all five tables first, so treat it as a development-only reset rather than a migration. The file starts with `SET NAMES utf8mb4` so the em dash in the sample text survives imports from clients whose default charset is a legacy Windows code page.
 
 Demo logins: `mod_arjun` / `password123` (moderator), `priya_dev` / `password123`, `rohan_sec` / `password123`, and `Vault#6154` with token `4829-1049-8372-6154`. The seeded `token_lookup` uses the development fallback `APP_SECRET` from `config/db.php`; regenerate it if `THREADZERO_APP_SECRET` is set.
 
@@ -483,7 +483,7 @@ flowchart TB
 
 ### C. Database Architect (1 Member — `schema.sql`, `seed.sql`, SQL Queries)
 
-* **Know how to explain:** Primary vs. Foreign Keys across the 4 tables (see the ER diagram in §3.3), the self-referencing Foreign Key in `posts` (`parent_id` pointing to `posts.id`), how `ON DELETE CASCADE` cleans up replies and bookmarks automatically, why reports are a boolean flag (`posts.is_reported`) instead of a fifth table, and `JOIN` queries between `posts` and `users`.
+* **Know how to explain:** Primary vs. Foreign Keys across the 5 tables (see the ER diagram in §3.3), the self-referencing Foreign Key in `posts` (`parent_id` pointing to `posts.id`), how `ON DELETE CASCADE` cleans up replies and bookmarks automatically, how notifications are stored in the notifications table and reports are tracked using the posts.is_reported boolean flag, and `JOIN` queries between `posts` and `users`.
 * **Practice live changes:** Running `GROUP BY` queries in phpMyAdmin to count posts per user, or adding a `views` column to `posts`.
 
 ---
