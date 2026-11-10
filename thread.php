@@ -119,6 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         $thread_owner_id = (int)$thread['user_id'];
                         
                         if ((int)$current_user_id !== $thread_owner_id) {
+                            // [SQL INSERT] Create a notification for the thread owner when another user replies
                             $notify_sql = "INSERT INTO notifications
                                            (recipient_id, actor_id, post_id, thread_id, type)
                                            VALUES (?, ?, ?, ?, 'reply')";
