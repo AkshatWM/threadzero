@@ -7,7 +7,7 @@ SET NAMES utf8mb4;
 -- ============================================================
 -- ThreadZero demo seed
 --
--- WARNING: this script TRUNCATEs all four tables and rebuilds the
+-- WARNING: this script TRUNCATEs all five tables and rebuilds the
 -- demo dataset. Run it only against a development database, never
 -- against data you want to keep.
 --
@@ -18,6 +18,7 @@ SET NAMES utf8mb4;
 
 -- Clear existing demo data safely (order respects foreign keys)
 SET FOREIGN_KEY_CHECKS = 0;
+TRUNCATE TABLE notifications;
 TRUNCATE TABLE bookmarks;
 TRUNCATE TABLE posts;
 TRUNCATE TABLE boards;
