@@ -40,6 +40,7 @@ $body_class = $body_class ?? 'home-page';
                 $notification_count = 0;
                 
                 if (isLoggedIn()) {
+                    // [SQL SELECT] Count unread notifications for the logged-in user
                     $notification_stmt = $pdo->prepare(
                         "SELECT COUNT(*)
                          FROM notifications
