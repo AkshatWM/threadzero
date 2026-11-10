@@ -1,4 +1,3 @@
-
 <?php
 require_once 'config/db.php';
 require_once 'config/functions.php';
@@ -24,6 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $notification_id = (int) ($_POST['notification_id'] ?? 0);
 
+        // [SQL UPDATE] Mark one notification as read for its recipient
         $stmt = $pdo->prepare(
             "UPDATE notifications
              SET is_read = 1
@@ -34,6 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     } elseif ($action === 'mark_all_read') {
 
+        // [SQL UPDATE] Mark all unread notifications as read for the logged-in user
         $stmt = $pdo->prepare(
             "UPDATE notifications
              SET is_read = 1
@@ -46,6 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $notification_id = (int) ($_POST['notification_id'] ?? 0);
 
+        // [SQL DELETE] Delete a notification belonging to the logged-in user
         $stmt = $pdo->prepare(
             "DELETE FROM notifications
              WHERE id = ? AND recipient_id = ?"
@@ -58,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-// Fetch notifications belonging to the logged-in user
+// [SQL SELECT] Fetch notifications belonging to the logged-in user
 $sql = "SELECT
             n.id,
             n.post_id,
@@ -80,7 +82,7 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute([$current_user_id]);
 $notifications = $stmt->fetchAll();
 
-// Get unread count
+// [SQL SELECT] Count unread notifications for the logged-in user
 $count_stmt = $pdo->prepare(
     "SELECT COUNT(*)
      FROM notifications
