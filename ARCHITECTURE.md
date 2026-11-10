@@ -18,7 +18,7 @@ Whether a human teammate or an AI agent writes code for this repository, it **MU
 2. **Strict Tech Stack:**
    - **Frontend:** Semantic HTML5 and **one hand-written stylesheet** (`assets/css/style.css`) built with Flexbox and media queries; CSS custom properties provide the light/dark themes. **Vanilla JavaScript** (ES6 DOM manipulation). No Tailwind, Bootstrap, React or Vue, and no CSS/JS build step.
    - **Backend:** PHP 8.x using `PDO` prepared statements (`?` placeholders) and native `$_SESSION`.
-   - **Database:** MySQL / MariaDB (Strictly **4 normalized tables**: `users`, `boards`, `posts`, `bookmarks`).
+   - **Database:** MySQL / MariaDB (Strictly **5 normalized tables**: `users`, `boards`, `posts`, `bookmarks`, `notifications`).
 3. **Viva-Ready Comments:**
    - Add a clear 1-line comment above every SQL query (e.g., `// [SQL UPDATE] Bump parent thread to the top of the board`) and key `if/else` block so any teammate can read and explain the logic in 10 seconds.
 
@@ -57,9 +57,9 @@ When extending a page:
 
 ---
 
-## 3. Official 4-Table Database Schema (`sql/schema.sql`)
+## 3. Official 5-Table Database Schema (`sql/schema.sql`)
 
-All team members and AI tools must strictly use this 4-table schema:
+All team members and AI tools must strictly use this 5-table schema:
 
 ```sql
 CREATE DATABASE IF NOT EXISTS threadzero
