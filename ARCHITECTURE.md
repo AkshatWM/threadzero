@@ -191,52 +191,69 @@ These rules protect the token-login and anonymity model. Do not skip them "to sa
 The diagram below mirrors the DDL in `sql/schema.sql`, including the self-referencing `posts.parent_id` relationship that stores replies.
 
 ```mermaid
+
 erDiagram
-    USERS ||--o{ POSTS : "authors (user_id)"
-    USERS ||--o{ BOOKMARKS : "saves (user_id)"
-    BOARDS ||--o{ POSTS : "contains (board_id)"
-    POSTS ||--o{ POSTS : "replies to (parent_id)"
-    POSTS ||--o{ BOOKMARKS : "bookmarked in (post_id)"
+    USERS ||--o{ POSTS : authors
+    USERS ||--o{ BOOKMARKS : saves
+    BOARDS ||--o{ POSTS : contains
+    POSTS ||--o{ POSTS : replies_to
+    POSTS ||--o{ BOOKMARKS : bookmarked_in
+    USERS ||--o{ NOTIFICATIONS : receives
+    USERS ||--o{ NOTIFICATIONS : acts
+    POSTS ||--o{ NOTIFICATIONS : reply
+    POSTS ||--o{ NOTIFICATIONS : thread
 
     USERS {
-        int id PK "AUTO_INCREMENT"
-        varchar(50) username UK "Handle or Vault#XXXX"
-        varchar(255) password_hash "Bcrypt of password or token"
-        char(64) token_lookup UK "HMAC-SHA256(token, APP_SECRET)"
-        varchar(255) bio "Max 255 chars"
-        enum role "'user' or 'mod'"
+        int id PK
+        varchar username UK
+        varchar password_hash
+        char token_lookup UK
+        varchar bio
+        enum role
         timestamp created_at
     }
 
     BOARDS {
-        int id PK "AUTO_INCREMENT"
-        varchar(20) slug UK "tech, science, gaming, general"
-        varchar(100) title
-        varchar(255) description
+        int id PK
+        varchar slug UK
+        varchar title
+        varchar description
     }
 
     POSTS {
-        int id PK "AUTO_INCREMENT = 1001"
-        int board_id FK "ON DELETE CASCADE"
-        int user_id FK "ON DELETE CASCADE"
-        int parent_id FK "NULL = Thread, ID = Reply"
-        varchar(150) title "NULL for replies"
-        text content "Supports >greentext & >>quotes"
-        varchar(255) image_path "Optional upload path"
-        tinyint(1) is_anon "1 = Masked as Anonymous [OP]"
-        tinyint(1) is_pinned "1 = Pinned to board top"
-        tinyint(1) is_locked "1 = Replies disabled"
-        tinyint(1) is_reported "1 = In Mod Queue"
-        timestamp bumped_at "Updated on non-Sage reply"
+        int id PK
+        int board_id FK
+        int user_id FK
+        int parent_id FK
+        varchar title
+        text content
+        varchar image_path
+        tinyint is_anon
+        tinyint is_pinned
+        tinyint is_locked
+        tinyint is_reported
+        timestamp bumped_at
         timestamp created_at
     }
 
     BOOKMARKS {
-        int id PK "AUTO_INCREMENT"
-        int user_id FK "ON DELETE CASCADE"
-        int post_id FK "ON DELETE CASCADE"
+        int id PK
+        int user_id FK
+        int post_id FK
         timestamp created_at
     }
+
+    NOTIFICATIONS {
+        int id PK
+        int recipient_id FK
+        int actor_id FK
+        int post_id FK
+        int thread_id FK
+        varchar type
+        tinyint is_read
+        timestamp created_at
+    }
+
 ```
 
 ---
