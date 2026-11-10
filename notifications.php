@@ -96,7 +96,7 @@ $body_class = 'notifications-page';
 require_once 'includes/header.php';
 ?>
 
-<main class="container">
+<main class="home-content">
 
     <section class="profile-box notification-heading">
 
@@ -136,7 +136,7 @@ require_once 'includes/header.php';
 
                     <p>
                         <strong>
-                            <?= htmlspecialchars($notification['actor_username'] ?? 'Deleted User') ?>
+                            @<?= htmlspecialchars($notification['actor_username'] ?? 'Deleted User') ?>
                         </strong>
                         replied to your thread.
                     </p>
