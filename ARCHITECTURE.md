@@ -429,6 +429,19 @@ Any developer can pick up and build one of these self-contained modules:
 * `quotePost()` appends `>>ID` to the reply box and dispatches an `input` event so the live character counter stays in sync.
 * Live character counters are attached to `textarea[name="content"]` and `textarea[name="bio"]`; thread/reply forms are blocked client-side when the trimmed content is shorter than 2 characters.
 
+
+
+* **Module 7: `notifications.php` + `includes/header.php` (Notifications)**
+* When another user replies to a thread, `thread.php` inserts a notification for the thread owner into the `notifications` table.
+* The notification stores the recipient ID, actor ID, reply post ID, thread ID, notification type and read status.
+* `includes/header.php` displays a Notifications link and the unread notification count for the logged-in user.
+* `notifications.php` displays the logged-in user's notifications, including the actor username, thread title and reply preview.
+* **View Reply** navigates directly to the relevant reply using its post ID anchor.
+* Users can mark one notification as read, mark all notifications as read, or delete individual notifications.
+* All notification actions use POST requests with CSRF protection. Database queries restrict access to the logged-in user's own notifications.
+* Deleting a user or related post automatically cleans up associated notifications through foreign key constraints.
+
+
 ### 5.1 System Architecture & Request Flow
 
 This diagram shows how a browser request moves through the root PHP controllers, the shared `config/` + `includes/` foundation, and the MySQL/upload storage layer.
