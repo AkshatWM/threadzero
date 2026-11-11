@@ -20,6 +20,17 @@ function verifyCsrfToken($submittedToken) {
     return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], (string)$submittedToken);
 }
 
+// Count unread notifications for a user (used by the navbar badge and the inbox)
+function countUnreadNotifications($pdo, $userId) {
+    $stmt = $pdo->prepare(
+        "SELECT COUNT(*)
+         FROM notifications
+         WHERE recipient_id = ? AND is_read = 0"
+    );
+    $stmt->execute([(int)$userId]);
+    return (int)$stmt->fetchColumn();
+}
+
 // Asymmetric Anonymity Rule: Decides whether to show "Anonymous [OP]" or "@username"
 function renderAuthorBadge($post, $parentThread = null) {
     // 1. Main thread with "Post Anonymously" checked

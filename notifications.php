@@ -8,6 +8,13 @@ if (!isLoggedIn()) {
 }
 
 $current_user_id = (int) $_SESSION['user_id'];
+$success = '';
+
+// Pick up a one-shot flash message after a redirect
+if (!empty($_SESSION['flash_success'])) {
+    $success = $_SESSION['flash_success'];
+    unset($_SESSION['flash_success']);
+}
 
 // Handle notification actions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -17,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit('Invalid CSRF token.');
     }
 
-    $action = $_POST['action'] ?? '';
+    $action = is_string($_POST['action'] ?? null) ? $_POST['action'] : '';
 
     if ($action === 'mark_read') {
 
@@ -31,6 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         );
 
         $stmt->execute([$notification_id, $current_user_id]);
+        $_SESSION['flash_success'] = 'Notification marked as read.';
 
     } elseif ($action === 'mark_all_read') {
 
@@ -42,6 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         );
 
         $stmt->execute([$current_user_id]);
+        $_SESSION['flash_success'] = 'All notifications marked as read.';
 
     } elseif ($action === 'delete') {
 
@@ -54,6 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         );
 
         $stmt->execute([$notification_id, $current_user_id]);
+        $_SESSION['flash_success'] = 'Notification deleted.';
     }
 
     header('Location: notifications.php');
@@ -82,15 +92,7 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute([$current_user_id]);
 $notifications = $stmt->fetchAll();
 
-// [SQL SELECT] Count unread notifications for the logged-in user
-$count_stmt = $pdo->prepare(
-    "SELECT COUNT(*)
-     FROM notifications
-     WHERE recipient_id = ? AND is_read = 0"
-);
-
-$count_stmt->execute([$current_user_id]);
-$unread_count = (int) $count_stmt->fetchColumn();
+$unread_count = countUnreadNotifications($pdo, $current_user_id);
 
 $page_title = 'Notifications - ThreadZero';
 $body_class = 'notifications-page';
@@ -104,8 +106,13 @@ require_once 'includes/header.php';
 
         <h1>Notifications</h1>
 
+        <?php if ($success !== ''): ?>
+            <div class="form-success"><?= htmlspecialchars($success) ?></div>
+        <?php endif; ?>
+
         <p>
-            You have <?= $unread_count ?> unread notification(s).
+            You have <?= $unread_count ?> unread
+            <?= $unread_count === 1 ? 'notification' : 'notifications' ?>.
         </p>
 
         <?php if ($unread_count > 0): ?>
@@ -188,7 +195,7 @@ require_once 'includes/header.php';
 
                         <?php endif; ?>
 
-                        <form method="POST" action="notifications.php">
+                        <form method="POST" action="notifications.php" onsubmit="return confirm('Delete this notification?');">
                             <?= csrfField() ?>
 
                             <input type="hidden"

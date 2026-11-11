@@ -21,6 +21,9 @@
   - **Rich Text Parsing:** Native support for `>greentext` quotes and clickable `>>1001` post reference anchors.
 - **🛡️ Moderation & Bookmarks:**
   - Built-in post flagging, thread pinning/locking, and personal thread bookmarks.
+- **🔔 Reply Notifications:**
+  - Thread owners get an in-app notification whenever another user replies to their thread, with an unread count in the navbar.
+  - The inbox shows the actor, thread title and reply preview, with **View Reply**, **Mark as Read**, **Mark All as Read** and **Delete** actions.
 - **🌗 Dual Theme Engine:**
   - Instant switching between **Retro Light (Yotsuba)** and **Modern Dark (Tomorrow)** modes using CSS variables and `localStorage`.
 
@@ -32,7 +35,7 @@
 | :--------------------- | :---------------------------------------------------------------------- |
 | **Frontend**           | HTML5, custom CSS3 (`assets/css/style.css`), Vanilla JavaScript         |
 | **Backend**            | PHP 8.x (Procedural + PDO Prepared Statements, Native Sessions)         |
-| **Database**           | MySQL / MariaDB (5 Normalized Tables with Foreign Key Constraints)      | 
+| **Database**           | MySQL / MariaDB (5 Normalized Tables with Foreign Key Constraints)      |
 | **Server Environment** | Laragon (Apache + MySQL), XAMPP, WAMP or LAMP               |
 
 ---
@@ -59,10 +62,10 @@ threadzero/
 ├── auth.php                 # Dual login/signup + 16-digit token generator
 ├── profile.php              # Profile: bio editor, post history & saved bookmarks
 ├── admin.php                # Mod panel: reported queue, pin/lock, delete
+├── notifications.php        # Notification inbox, mark as read & delete
 ├── ARCHITECTURE.md          # Full technical spec for devs & AI assistants
 ├── README.md                # Project overview & setup instructions
 └── PROGRESS.md              # Live build tracker & module completion log
-├── notifications.php        # Notification inbox, mark as read & delete
 ```
 
 ---
@@ -78,7 +81,7 @@ C:\laragon\www\threadzero
 2. **Start Apache and MySQL** from the Laragon menu (or click **Start All**).
 3. **Create and seed the database.** Open **HeidiSQL** or **phpMyAdmin** from Laragon, then import/run [`sql/schema.sql`](./sql/schema.sql) followed by [`sql/seed.sql`](./sql/seed.sql). The schema creates the `threadzero` database, the five tables and the four default boards; the seed rebuilds the demo dataset.
 
-   > **Warning:** `sql/seed.sql` truncates all five tables before inserting the demo rows. Run it only against a development database.
+   > **Warning:** `sql/schema.sql` drops the five tables before recreating them, and `sql/seed.sql` truncates them again before inserting the demo rows. Re-importing either file resets the database, so run this only against a development database.
 
    From a terminal you can run the same files with Laragon's MySQL client:
 
@@ -110,13 +113,13 @@ C:\laragon\bin\mysql\mysql-8.4.3-winx64\bin\mysql.exe -u root -e "source C:/lara
 
 ## 📋 Development Roadmap
 
-- [x] Architecture & 4-Table Schema Design (`ARCHITECTURE.md`)
+- [x] Architecture & 5-Table Schema Design (`ARCHITECTURE.md`)
 - [x] Static frontend prototypes (all folded into the PHP pages + `assets/css/style.css`)
-- [x] Database schema: `sql/schema.sql` (4 tables + default boards)
+- [x] Database schema: `sql/schema.sql` (5 tables + default boards)
 - [x] Core config & shared partials (`config/`, `includes/`)
 - [x] Module 1: Dual Authentication & 16-Digit Token Generator (`auth.php`)
 - [x] Module 2: Board Feed, Search, Sort & Thread Creation (`index.php`)
-- [x] Demo data: `sql/seed.sql` (4 users, 6 threads, 7 replies, bookmarks & reports)
+- [x] Demo data: `sql/seed.sql` (4 users, 6 threads, 7 replies, bookmarks, notifications & reports)
 - [x] Module 3: Thread Replies, Bump/Sage, Edit/Delete, Bookmarks & Reporting (`thread.php`)
 - [x] Module 4: User Profile, Post History & Bookmarks (`profile.php`)
 - [x] Module 5: Moderation & Reporting Dashboard (`admin.php`)

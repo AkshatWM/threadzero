@@ -190,3 +190,15 @@ INSERT INTO bookmarks (user_id, post_id, created_at) VALUES
 (2, 1002, '2026-11-05 17:15:00'),
 (2, 1003, '2026-11-05 16:20:00'),
 (3, 1001, '2026-11-05 18:50:00');
+
+-- ============================================================
+-- 6. SEED REPLY NOTIFICATIONS
+-- One row per reply where the actor differs from the thread owner.
+-- `is_read` is mixed so the unread badge and the read state are both demoable.
+-- ============================================================
+INSERT INTO notifications (recipient_id, actor_id, post_id, thread_id, type, is_read, created_at) VALUES
+(2, 4, 1007, 1001, 'reply', 0, '2026-11-05 18:10:00'),
+(2, 4, 1013, 1001, 'reply', 0, '2026-11-05 18:35:00'),
+(2, 3, 1011, 1004, 'reply', 1, '2026-11-05 18:45:00'),
+(3, 1, 1009, 1002, 'reply', 1, '2026-11-05 17:10:00'),
+(4, 3, 1010, 1003, 'reply', 0, '2026-11-05 16:00:00');

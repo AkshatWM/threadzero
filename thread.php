@@ -115,15 +115,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         ]);
                         $new_reply_id = $pdo->lastInsertId();
 
-                        // Create notification for the thread owner
+                        // Create a notification for the thread owner unless they replied to themselves
                         $thread_owner_id = (int)$thread['user_id'];
-                        
+
                         if ((int)$current_user_id !== $thread_owner_id) {
                             // [SQL INSERT] Create a notification for the thread owner when another user replies
                             $notify_sql = "INSERT INTO notifications
                                            (recipient_id, actor_id, post_id, thread_id, type)
                                            VALUES (?, ?, ?, ?, 'reply')";
-                        
+
                             $notify_stmt = $pdo->prepare($notify_sql);
                             $notify_stmt->execute([
                                 $thread_owner_id,

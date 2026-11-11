@@ -2,7 +2,8 @@
 .login-page,
 .register-page,
 .thread-page,
-.profile-page {
+.profile-page,
+.notifications-page {
     margin: 0;
     background-color: #f4f1e8;
     font-family: Arial, sans-serif;
@@ -863,7 +864,8 @@ html[data-theme="dark"] .home-page,
 html[data-theme="dark"] .login-page,
 html[data-theme="dark"] .register-page,
 html[data-theme="dark"] .thread-page,
-html[data-theme="dark"] .profile-page {
+html[data-theme="dark"] .profile-page,
+html[data-theme="dark"] .notifications-page {
     background-color: var(--bg);
     color: var(--text-main);
 }
@@ -1009,19 +1011,9 @@ html[data-theme="dark"] .action-muted {
     color: #94a3b8;
 }
 
-
-
 /* =================================
    NOTIFICATION MANAGEMENT MODULE
 ================================= */
-
-.notifications-page {
-    min-height: 100vh;
-    margin: 0;
-    background-color: var(--bg);
-    color: var(--text-main);
-    font-family: Arial, sans-serif;
-}
 
 .notification-heading {
     text-align: center;

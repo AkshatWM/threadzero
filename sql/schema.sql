@@ -1,5 +1,5 @@
--- ThreadZero schema (4 normalized tables)
--- Re-runnable: drops the four tables in dependency order, then recreates them.
+-- ThreadZero schema (5 normalized tables)
+-- Re-runnable: drops the five tables in dependency order, then recreates them.
 
 CREATE DATABASE IF NOT EXISTS threadzero
     CHARACTER SET utf8mb4

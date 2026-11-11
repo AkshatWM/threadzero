@@ -167,7 +167,7 @@ INSERT IGNORE INTO boards (slug, title, description) VALUES
 
 ### 3.1 Demo Seed Data (`sql/seed.sql`)
 
-`sql/seed.sql` rebuilds a complete demo dataset after `schema.sql`: four users (one moderator, three regular accounts and one token account), six threads across the four boards, seven replies, five bookmarks and two reported posts. It truncates all five tables first, so treat it as a development-only reset rather than a migration. The file starts with `SET NAMES utf8mb4` so the em dash in the sample text survives imports from clients whose default charset is a legacy Windows code page.
+`sql/seed.sql` rebuilds a complete demo dataset after `schema.sql`: four users (one moderator, three regular accounts and one token account), six threads across the four boards, seven replies, five bookmarks, five reply notifications (three unread) and two reported posts. It truncates all five tables first, so treat it as a development-only reset rather than a migration. The file starts with `SET NAMES utf8mb4` so the em dash in the sample text survives imports from clients whose default charset is a legacy Windows code page.
 
 Demo logins: `mod_arjun` / `password123` (moderator), `priya_dev` / `password123`, `rohan_sec` / `password123`, and `Vault#6154` with token `4829-1049-8372-6154`. The seeded `token_lookup` uses the development fallback `APP_SECRET` from `config/db.php`; regenerate it if `THREADZERO_APP_SECRET` is set.
 
@@ -185,82 +185,81 @@ These rules protect the token-login and anonymity model. Do not skip them "to sa
 8. **Minimise data.** No emails, phone numbers, or IP logging. `users` stores only `username`, `password_hash`, `token_lookup`, `bio`, `role`, `created_at`.
 9. **Rate-limit login.** After 5 failed attempts in one session, add a short `sleep()` delay and show a warning.
 10. **Be honest about anonymity.** `is_anon = 1` hides the author from other users, but `user_id` is still stored so the author can edit/delete and moderators can act. It is pseudonymity, not untraceability — say this clearly in the viva.
+11. **Scope notifications to the recipient.** Every notification query must filter by `recipient_id = $_SESSION['user_id']`; never expose another user's inbox.
 
 ### 3.3 Entity-Relationship (ER) Diagram
 
-The diagram below mirrors the DDL in `sql/schema.sql`, including the self-referencing `posts.parent_id` relationship that stores replies.
+The diagram below mirrors the DDL in `sql/schema.sql`, including the self-referencing `posts.parent_id` relationship that stores replies and the `notifications` table that links a recipient, an optional actor, the reply and its parent thread.
 
 ```mermaid
-
 erDiagram
-    USERS ||--o{ POSTS : authors
-    USERS ||--o{ BOOKMARKS : saves
-    BOARDS ||--o{ POSTS : contains
-    POSTS ||--o{ POSTS : replies_to
-    POSTS ||--o{ BOOKMARKS : bookmarked_in
-    USERS ||--o{ NOTIFICATIONS : receives
-    USERS ||--o{ NOTIFICATIONS : acts
-    POSTS ||--o{ NOTIFICATIONS : reply
-    POSTS ||--o{ NOTIFICATIONS : thread
+    USERS ||--o{ POSTS : "authors (user_id)"
+    USERS ||--o{ BOOKMARKS : "saves (user_id)"
+    BOARDS ||--o{ POSTS : "contains (board_id)"
+    POSTS ||--o{ POSTS : "replies to (parent_id)"
+    POSTS ||--o{ BOOKMARKS : "bookmarked in (post_id)"
+    USERS ||--o{ NOTIFICATIONS : "receives (recipient_id)"
+    USERS |o--o{ NOTIFICATIONS : "acts (actor_id, nullable)"
+    POSTS ||--o{ NOTIFICATIONS : "notifies reply (post_id)"
+    POSTS ||--o{ NOTIFICATIONS : "notifies thread (thread_id)"
 
     USERS {
-        int id PK
-        varchar username UK
-        varchar password_hash
-        char token_lookup UK
-        varchar bio
-        enum role
+        int id PK "AUTO_INCREMENT"
+        varchar(50) username UK "Handle or Vault#XXXX"
+        varchar(255) password_hash "Bcrypt of password or token"
+        char(64) token_lookup UK "HMAC-SHA256(token, APP_SECRET)"
+        varchar(255) bio "Max 255 chars"
+        enum role "'user' or 'mod'"
         timestamp created_at
     }
 
     BOARDS {
-        int id PK
-        varchar slug UK
-        varchar title
-        varchar description
+        int id PK "AUTO_INCREMENT"
+        varchar(20) slug UK "tech, science, gaming, general"
+        varchar(100) title
+        varchar(255) description
     }
 
     POSTS {
-        int id PK
-        int board_id FK
-        int user_id FK
-        int parent_id FK
-        varchar title
-        text content
-        varchar image_path
-        tinyint is_anon
-        tinyint is_pinned
-        tinyint is_locked
-        tinyint is_reported
-        timestamp bumped_at
+        int id PK "AUTO_INCREMENT = 1001"
+        int board_id FK "ON DELETE CASCADE"
+        int user_id FK "ON DELETE CASCADE"
+        int parent_id FK "NULL = Thread, ID = Reply"
+        varchar(150) title "NULL for replies"
+        text content "Supports >greentext & >>quotes"
+        varchar(255) image_path "Optional upload path"
+        tinyint(1) is_anon "1 = Masked as Anonymous [OP]"
+        tinyint(1) is_pinned "1 = Pinned to board top"
+        tinyint(1) is_locked "1 = Replies disabled"
+        tinyint(1) is_reported "1 = In Mod Queue"
+        timestamp bumped_at "Updated on non-Sage reply"
         timestamp created_at
     }
 
     BOOKMARKS {
-        int id PK
-        int user_id FK
-        int post_id FK
+        int id PK "AUTO_INCREMENT"
+        int user_id FK "ON DELETE CASCADE"
+        int post_id FK "ON DELETE CASCADE"
         timestamp created_at
     }
 
     NOTIFICATIONS {
-        int id PK
-        int recipient_id FK
-        int actor_id FK
-        int post_id FK
-        int thread_id FK
-        varchar type
-        tinyint is_read
+        int id PK "AUTO_INCREMENT"
+        int recipient_id FK "Thread owner, ON DELETE CASCADE"
+        int actor_id FK "Replier, ON DELETE SET NULL"
+        int post_id FK "Reply that triggered it"
+        int thread_id FK "Parent thread"
+        varchar(50) type "'reply' by default"
+        tinyint(1) is_read "0 = Unread badge"
         timestamp created_at
     }
-
 ```
 
 ---
 
 ## 4. Core Shared Code (`config/db.php` & `config/functions.php`)
 
-Every root page (`index.php`, `thread.php`, `auth.php`, `profile.php`, `admin.php`) includes these two files at the top. There are no static `.html` routes any more.
+Every root page (`index.php`, `thread.php`, `auth.php`, `profile.php`, `admin.php`, `notifications.php`) includes these two files at the top. There are no static `.html` routes any more.
 
 ### `config/db.php`
 
@@ -377,16 +376,18 @@ The static prototypes already use these names. Do not invent new ones; the PHP p
 | Report post | `report_post` | `post_id` |
 | Update bio | `update_bio` | `bio` |
 | Moderation | `unflag`, `toggle_pin`, `toggle_lock`, `delete_post` | `post_id` |
+| Notifications | `mark_read`, `mark_all_read`, `delete` | `notification_id` (for `mark_read` and `delete`) |
 
 **GET field names:** `search`, `sort` (`bumped` or `newest`), `board` (slug), `id` (thread), `edit` (post being edited), `page` (future).
 
-**Session keys:** `user_id`, `username`, `role`, `csrf_token`, `failed_logins`. On logout, clear `$_SESSION`, expire the session cookie, then `session_destroy()`.
+**Session keys:** `user_id`, `username`, `role`, `csrf_token`, `failed_logins`, `flash_success` (one-shot success message), `generated_token` (one-time token reveal). On logout, clear `$_SESSION`, expire the session cookie, then `session_destroy()`.
 
 **Redirect rules:**
 - Successful standard login or signup → `index.php` (POST → redirect → GET).
 - Successful logout → `auth.php`.
 - Token signup uses POST → redirect → GET as well: the plaintext token is stashed in `$_SESSION['generated_token']`, the POST redirects to `auth.php?mode=register&show_token=1`, and that GET renders the token once before deleting it from the session. The token never appears in the URL, and the response sends `Cache-Control: no-store`.
 - Validation or login failure → re-render the same form with `$error` and HTTP 200; never redirect with the error in the URL.
+- Successful notification actions → `notifications.php` (POST → redirect → GET) with a one-shot `$_SESSION['flash_success']` message.
 - `auth.php` handles both login and signup modes; `login.html` and `register.html` have been removed now that their markup lives in `auth.php`.
 
 **Validation limits (enforce server-side and mirror in HTML):**
@@ -446,8 +447,6 @@ Any developer can pick up and build one of these self-contained modules:
 * `quotePost()` appends `>>ID` to the reply box and dispatches an `input` event so the live character counter stays in sync.
 * Live character counters are attached to `textarea[name="content"]` and `textarea[name="bio"]`; thread/reply forms are blocked client-side when the trimmed content is shorter than 2 characters.
 
-
-
 * **Module 7: `notifications.php` + `includes/header.php` (Notifications)**
 * When another user replies to a thread, `thread.php` inserts a notification for the thread owner into the `notifications` table.
 * The notification stores the recipient ID, actor ID, reply post ID, thread ID, notification type and read status.
@@ -456,8 +455,7 @@ Any developer can pick up and build one of these self-contained modules:
 * **View Reply** navigates directly to the relevant reply using its post ID anchor.
 * Users can mark one notification as read, mark all notifications as read, or delete individual notifications.
 * All notification actions use POST requests with CSRF protection. Database queries restrict access to the logged-in user's own notifications.
-* Deleting a user or related post automatically cleans up associated notifications through foreign key constraints.
-
+* Deleting a thread or reply removes its notifications through `ON DELETE CASCADE`; deleting an actor sets `actor_id` to `NULL` (`ON DELETE SET NULL`), which the inbox shows as "Deleted User".
 
 ### 5.1 System Architecture & Request Flow
 
@@ -476,16 +474,17 @@ flowchart TB
         THREAD["thread.php (Module 3: Replies, Bump/Sage, Edit/Delete)"]
         PROFILE["profile.php (Module 4: Bio Update & Saved Bookmarks)"]
         ADMIN["admin.php (Module 5: Mod Queue, Pin/Lock/Delete)"]
+        NOTIF["notifications.php (Module 7: Reply Alerts, Mark Read, Delete)"]
     end
 
     subgraph Core ["Shared Foundation (config/ & includes/)"]
-        HEADER["includes/header.php & footer.php"]
-        FUNC["config/functions.php (CSRF, renderAuthorBadge, formatPostBody)"]
+        HEADER["includes/header.php & footer.php (Theme + Unread Badge)"]
+        FUNC["config/functions.php (CSRF, renderAuthorBadge, formatPostBody, countUnreadNotifications)"]
         DB["config/db.php (PDO Connection + Hardened $_SESSION)"]
     end
 
     subgraph Storage ["Persistence Layer"]
-        MYSQL[("MySQL: threadzero\n(users, boards, posts, bookmarks)")]
+        MYSQL[("MySQL: threadzero\n(users, boards, posts, bookmarks, notifications)")]
         UPLOADS[("assets/uploads/\n(Validated Images + .htaccess)")]
     end
 
@@ -506,14 +505,14 @@ flowchart TB
 * **Know how to explain:** How `assets/css/style.css` is organised (one commented section per page plus shared `.badge-anon`, `.badge-user`, `.greentext`, `.quote-link` and theme helpers), Flexbox layout, the mobile `@media (max-width: 600px)` block, how CSS custom properties plus `data-theme`/`localStorage` drive dark mode, HTML form `method="POST"` and `enctype="multipart/form-data"`, and how `includes/header.php`/`includes/footer.php` wrap every page.
 * **Practice live changes:** Change a theme colour, move the navbar, add a minimum character length check in JS, or add a `confirm()` dialog on delete buttons.
 
-### B. Backend Developers (2 Members — `auth.php`, `index.php`, `thread.php`, `profile.php`, `admin.php`)
+### B. Backend Developers (2 Members — `auth.php`, `index.php`, `thread.php`, `profile.php`, `admin.php`, `notifications.php`)
 
-* **Know how to explain:** PHP `$_SESSION` lifecycle and `session_regenerate_id(true)` after login, PDO prepared statements (`?` placeholders) vs. SQL injection, how `random_int()` creates the 16-digit token, why the DB stores `token_lookup` (HMAC-SHA256 with `APP_SECRET`) and a `password_hash()` instead of the raw token, how `renderAuthorBadge()` checks `$parentThread['is_anon']`, and how a request moves from a root controller through `config/`/`includes/` to MySQL (see the request-flow diagram in §5.1).
+* **Know how to explain:** PHP `$_SESSION` lifecycle and `session_regenerate_id(true)` after login, PDO prepared statements (`?` placeholders) vs. SQL injection, how `random_int()` creates the 16-digit token, why the DB stores `token_lookup` (HMAC-SHA256 with `APP_SECRET`) and a `password_hash()` instead of the raw token, how `renderAuthorBadge()` checks `$parentThread['is_anon']`, how `thread.php` inserts a notification for the thread owner and why self-replies are skipped, how `notifications.php` scopes every query to the logged-in recipient, and how a request moves from a root controller through `config/`/`includes/` to MySQL (see the request-flow diagram in §5.1).
 * **Practice live changes:** Adding a new field to the profile page, restricting an action to moderators only, or changing the `>greentext` regex character.
 
 ### C. Database Architect (1 Member — `schema.sql`, `seed.sql`, SQL Queries)
 
-* **Know how to explain:** Primary vs. Foreign Keys across the 5 tables (see the ER diagram in §3.3), the self-referencing Foreign Key in `posts` (`parent_id` pointing to `posts.id`), how `ON DELETE CASCADE` cleans up replies and bookmarks automatically, how notifications are stored in the notifications table and reports are tracked using the posts.is_reported boolean flag, and `JOIN` queries between `posts` and `users`.
+* **Know how to explain:** Primary vs. Foreign Keys across the 5 tables (see the ER diagram in §3.3), the self-referencing Foreign Key in `posts` (`parent_id` pointing to `posts.id`), how `ON DELETE CASCADE` cleans up replies, bookmarks and notifications automatically, why `notifications.actor_id` uses `ON DELETE SET NULL` while `recipient_id` uses `CASCADE`, why reports are a boolean flag (`posts.is_reported`) instead of a separate reports table, and `JOIN` queries between `posts` and `users`.
 * **Practice live changes:** Running `GROUP BY` queries in phpMyAdmin to count posts per user, or adding a `views` column to `posts`.
 
 ---
