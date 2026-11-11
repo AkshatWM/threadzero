@@ -36,6 +36,28 @@ $body_class = $body_class ?? 'home-page';
             <a href="index.php">Home</a>
             <?php if (isLoggedIn()): ?>
                 <a href="profile.php">Profile (@<?= htmlspecialchars($_SESSION['username']) ?>)</a>
+                            <?php
+                $notification_count = 0;
+                
+                if (isLoggedIn()) {
+                    // [SQL SELECT] Count unread notifications for the logged-in user
+                    $notification_stmt = $pdo->prepare(
+                        "SELECT COUNT(*)
+                         FROM notifications
+                         WHERE recipient_id = ? AND is_read = 0"
+                    );
+                
+                    $notification_stmt->execute([(int)$_SESSION['user_id']]);
+                    $notification_count = (int)$notification_stmt->fetchColumn();
+                }
+                ?>
+                
+                <a href="notifications.php">
+                    Notifications
+                    <?php if ($notification_count > 0): ?>
+                        (<?= $notification_count ?>)
+                    <?php endif; ?>
+                </a>
                 <?php if (isMod()): ?>
                     <a href="admin.php">Mod Panel</a>
                 <?php endif; ?>

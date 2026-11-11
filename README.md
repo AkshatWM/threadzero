@@ -1,7 +1,7 @@
 # ThreadZero ⚡
 
 > **Status:** 🚧 Active Development (MVP Phase)
-> **Current build:** All six modules are implemented (dual authentication, board feed, thread engine, profile/bookmarks, moderation panel and the light/dark theme toggle), and `sql/seed.sql` provides a ready-to-demo dataset. The ER and request-flow diagrams live in [`ARCHITECTURE.md`](./ARCHITECTURE.md). Remaining work is screenshots and deployment evidence — see [`PROGRESS.md`](./PROGRESS.md).
+> **Current build:** All seven modules are implemented (dual authentication, board feed, thread engine, profile/bookmarks, moderation panel, light/dark theme toggle and notifications), and `sql/seed.sql` provides a ready-to-demo dataset. The ER and request-flow diagrams live in [`ARCHITECTURE.md`](./ARCHITECTURE.md). Remaining work is screenshots and deployment evidence — see [`PROGRESS.md`](./PROGRESS.md).
 > **Architecture & Developer Guide:** See [`ARCHITECTURE.md`](./ARCHITECTURE.md) for the full system specification, database schema, and module guidelines.
 
 **ThreadZero** is a privacy-first hybrid discussion board and imageboard engine built with **PHP 8 (PDO)**, **MySQL**, **HTML5/CSS3**, and **Vanilla JavaScript**. It combines the structured community boards of Reddit, the fast minimalist thread mechanics of 4chan/Hacker News, and the zero-knowledge authentication model of Mullvad VPN.
@@ -32,7 +32,7 @@
 | :--------------------- | :---------------------------------------------------------------------- |
 | **Frontend**           | HTML5, custom CSS3 (`assets/css/style.css`), Vanilla JavaScript         |
 | **Backend**            | PHP 8.x (Procedural + PDO Prepared Statements, Native Sessions)         |
-| **Database**           | MySQL / MariaDB (4 Normalized Tables with `ON DELETE CASCADE`)          |
+| **Database**           | MySQL / MariaDB (5 Normalized Tables with Foreign Key Constraints)      | 
 | **Server Environment** | Laragon (Apache + MySQL), XAMPP, WAMP or LAMP               |
 
 ---
@@ -52,8 +52,8 @@ threadzero/
 │   ├── header.php           # Shared navigation (POST logout + CSRF)
 │   └── footer.php           # Shared footer
 ├── sql/
-│   ├── schema.sql           # 4-table schema + default boards (re-runnable)
-│   └── seed.sql             # Demo users, threads, replies, bookmarks & reports
+│   ├── schema.sql           # 5-table schema + default boards (re-runnable)
+│   └── seed.sql             # Demo users, threads, replies, bookmarks, reports & notifications
 ├── index.php                # Board feed, search, sort & new-thread form
 ├── thread.php               # Thread view: replies, bump/sage, edit/delete, bookmark, report
 ├── auth.php                 # Dual login/signup + 16-digit token generator
@@ -62,6 +62,7 @@ threadzero/
 ├── ARCHITECTURE.md          # Full technical spec for devs & AI assistants
 ├── README.md                # Project overview & setup instructions
 └── PROGRESS.md              # Live build tracker & module completion log
+├── notifications.php        # Notification inbox, mark as read & delete
 ```
 
 ---
@@ -75,9 +76,9 @@ C:\laragon\www\threadzero
 ```
 
 2. **Start Apache and MySQL** from the Laragon menu (or click **Start All**).
-3. **Create and seed the database.** Open **HeidiSQL** or **phpMyAdmin** from Laragon, then import/run [`sql/schema.sql`](./sql/schema.sql) followed by [`sql/seed.sql`](./sql/seed.sql). The schema creates the `threadzero` database, the four tables and the four default boards; the seed rebuilds the demo dataset.
+3. **Create and seed the database.** Open **HeidiSQL** or **phpMyAdmin** from Laragon, then import/run [`sql/schema.sql`](./sql/schema.sql) followed by [`sql/seed.sql`](./sql/seed.sql). The schema creates the `threadzero` database, the five tables and the four default boards; the seed rebuilds the demo dataset.
 
-   > **Warning:** `sql/seed.sql` truncates all four tables before inserting the demo rows. Run it only against a development database.
+   > **Warning:** `sql/seed.sql` truncates all five tables before inserting the demo rows. Run it only against a development database.
 
    From a terminal you can run the same files with Laragon's MySQL client:
 
@@ -120,6 +121,7 @@ C:\laragon\bin\mysql\mysql-8.4.3-winx64\bin\mysql.exe -u root -e "source C:/lara
 - [x] Module 4: User Profile, Post History & Bookmarks (`profile.php`)
 - [x] Module 5: Moderation & Reporting Dashboard (`admin.php`)
 - [x] Module 6: Theme toggle and client-side polish (dark mode, live counters, min-length checks)
+- [x] Module 7: Notifications (reply alerts, unread count, inbox, mark as read and delete)
 
 ---
 

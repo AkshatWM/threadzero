@@ -18,7 +18,7 @@ Whether a human teammate or an AI agent writes code for this repository, it **MU
 2. **Strict Tech Stack:**
    - **Frontend:** Semantic HTML5 and **one hand-written stylesheet** (`assets/css/style.css`) built with Flexbox and media queries; CSS custom properties provide the light/dark themes. **Vanilla JavaScript** (ES6 DOM manipulation). No Tailwind, Bootstrap, React or Vue, and no CSS/JS build step.
    - **Backend:** PHP 8.x using `PDO` prepared statements (`?` placeholders) and native `$_SESSION`.
-   - **Database:** MySQL / MariaDB (Strictly **4 normalized tables**: `users`, `boards`, `posts`, `bookmarks`).
+   - **Database:** MySQL / MariaDB (Strictly **5 normalized tables**: `users`, `boards`, `posts`, `bookmarks`, `notifications`).
 3. **Viva-Ready Comments:**
    - Add a clear 1-line comment above every SQL query (e.g., `// [SQL UPDATE] Bump parent thread to the top of the board`) and key `if/else` block so any teammate can read and explain the logic in 10 seconds.
 
@@ -57,9 +57,9 @@ When extending a page:
 
 ---
 
-## 3. Official 4-Table Database Schema (`sql/schema.sql`)
+## 3. Official 5-Table Database Schema (`sql/schema.sql`)
 
-All team members and AI tools must strictly use this 4-table schema:
+All team members and AI tools must strictly use this 5-table schema:
 
 ```sql
 CREATE DATABASE IF NOT EXISTS threadzero
@@ -67,6 +67,7 @@ CREATE DATABASE IF NOT EXISTS threadzero
     COLLATE utf8mb4_unicode_ci;
 USE threadzero;
 
+DROP TABLE IF EXISTS notifications;
 DROP TABLE IF EXISTS bookmarks;
 DROP TABLE IF EXISTS posts;
 DROP TABLE IF EXISTS boards;
@@ -123,6 +124,38 @@ CREATE TABLE bookmarks (
     FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+-- 5. NOTIFICATIONS (Reply alerts for thread owners)
+CREATE TABLE notifications (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    recipient_id INT NOT NULL,
+    actor_id INT DEFAULT NULL,
+    post_id INT NOT NULL,
+    thread_id INT NOT NULL,
+    type VARCHAR(50) NOT NULL DEFAULT 'reply',
+    is_read TINYINT(1) NOT NULL DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (recipient_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (actor_id)
+        REFERENCES users(id)
+        ON DELETE SET NULL,
+
+    FOREIGN KEY (post_id)
+        REFERENCES posts(id)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (thread_id)
+        REFERENCES posts(id)
+        ON DELETE CASCADE,
+
+    INDEX idx_recipient_read (recipient_id, is_read),
+    INDEX idx_recipient_created (recipient_id, created_at)
+
+) ENGINE=InnoDB DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
 -- SEED DEFAULT BOARDS (safe to re-run)
 INSERT IGNORE INTO boards (slug, title, description) VALUES
 ('tech', 'Technology & Systems', 'Software engineering, AI architectures, Linux, and hardware.'),
@@ -134,7 +167,7 @@ INSERT IGNORE INTO boards (slug, title, description) VALUES
 
 ### 3.1 Demo Seed Data (`sql/seed.sql`)
 
-`sql/seed.sql` rebuilds a complete demo dataset after `schema.sql`: four users (one moderator, three regular accounts and one token account), six threads across the four boards, seven replies, five bookmarks and two reported posts. It truncates all four tables first, so treat it as a development-only reset rather than a migration. The file starts with `SET NAMES utf8mb4` so the em dash in the sample text survives imports from clients whose default charset is a legacy Windows code page.
+`sql/seed.sql` rebuilds a complete demo dataset after `schema.sql`: four users (one moderator, three regular accounts and one token account), six threads across the four boards, seven replies, five bookmarks and two reported posts. It truncates all five tables first, so treat it as a development-only reset rather than a migration. The file starts with `SET NAMES utf8mb4` so the em dash in the sample text survives imports from clients whose default charset is a legacy Windows code page.
 
 Demo logins: `mod_arjun` / `password123` (moderator), `priya_dev` / `password123`, `rohan_sec` / `password123`, and `Vault#6154` with token `4829-1049-8372-6154`. The seeded `token_lookup` uses the development fallback `APP_SECRET` from `config/db.php`; regenerate it if `THREADZERO_APP_SECRET` is set.
 
@@ -158,52 +191,69 @@ These rules protect the token-login and anonymity model. Do not skip them "to sa
 The diagram below mirrors the DDL in `sql/schema.sql`, including the self-referencing `posts.parent_id` relationship that stores replies.
 
 ```mermaid
+
 erDiagram
-    USERS ||--o{ POSTS : "authors (user_id)"
-    USERS ||--o{ BOOKMARKS : "saves (user_id)"
-    BOARDS ||--o{ POSTS : "contains (board_id)"
-    POSTS ||--o{ POSTS : "replies to (parent_id)"
-    POSTS ||--o{ BOOKMARKS : "bookmarked in (post_id)"
+    USERS ||--o{ POSTS : authors
+    USERS ||--o{ BOOKMARKS : saves
+    BOARDS ||--o{ POSTS : contains
+    POSTS ||--o{ POSTS : replies_to
+    POSTS ||--o{ BOOKMARKS : bookmarked_in
+    USERS ||--o{ NOTIFICATIONS : receives
+    USERS ||--o{ NOTIFICATIONS : acts
+    POSTS ||--o{ NOTIFICATIONS : reply
+    POSTS ||--o{ NOTIFICATIONS : thread
 
     USERS {
-        int id PK "AUTO_INCREMENT"
-        varchar(50) username UK "Handle or Vault#XXXX"
-        varchar(255) password_hash "Bcrypt of password or token"
-        char(64) token_lookup UK "HMAC-SHA256(token, APP_SECRET)"
-        varchar(255) bio "Max 255 chars"
-        enum role "'user' or 'mod'"
+        int id PK
+        varchar username UK
+        varchar password_hash
+        char token_lookup UK
+        varchar bio
+        enum role
         timestamp created_at
     }
 
     BOARDS {
-        int id PK "AUTO_INCREMENT"
-        varchar(20) slug UK "tech, science, gaming, general"
-        varchar(100) title
-        varchar(255) description
+        int id PK
+        varchar slug UK
+        varchar title
+        varchar description
     }
 
     POSTS {
-        int id PK "AUTO_INCREMENT = 1001"
-        int board_id FK "ON DELETE CASCADE"
-        int user_id FK "ON DELETE CASCADE"
-        int parent_id FK "NULL = Thread, ID = Reply"
-        varchar(150) title "NULL for replies"
-        text content "Supports >greentext & >>quotes"
-        varchar(255) image_path "Optional upload path"
-        tinyint(1) is_anon "1 = Masked as Anonymous [OP]"
-        tinyint(1) is_pinned "1 = Pinned to board top"
-        tinyint(1) is_locked "1 = Replies disabled"
-        tinyint(1) is_reported "1 = In Mod Queue"
-        timestamp bumped_at "Updated on non-Sage reply"
+        int id PK
+        int board_id FK
+        int user_id FK
+        int parent_id FK
+        varchar title
+        text content
+        varchar image_path
+        tinyint is_anon
+        tinyint is_pinned
+        tinyint is_locked
+        tinyint is_reported
+        timestamp bumped_at
         timestamp created_at
     }
 
     BOOKMARKS {
-        int id PK "AUTO_INCREMENT"
-        int user_id FK "ON DELETE CASCADE"
-        int post_id FK "ON DELETE CASCADE"
+        int id PK
+        int user_id FK
+        int post_id FK
         timestamp created_at
     }
+
+    NOTIFICATIONS {
+        int id PK
+        int recipient_id FK
+        int actor_id FK
+        int post_id FK
+        int thread_id FK
+        varchar type
+        tinyint is_read
+        timestamp created_at
+    }
+
 ```
 
 ---
@@ -396,6 +446,19 @@ Any developer can pick up and build one of these self-contained modules:
 * `quotePost()` appends `>>ID` to the reply box and dispatches an `input` event so the live character counter stays in sync.
 * Live character counters are attached to `textarea[name="content"]` and `textarea[name="bio"]`; thread/reply forms are blocked client-side when the trimmed content is shorter than 2 characters.
 
+
+
+* **Module 7: `notifications.php` + `includes/header.php` (Notifications)**
+* When another user replies to a thread, `thread.php` inserts a notification for the thread owner into the `notifications` table.
+* The notification stores the recipient ID, actor ID, reply post ID, thread ID, notification type and read status.
+* `includes/header.php` displays a Notifications link and the unread notification count for the logged-in user.
+* `notifications.php` displays the logged-in user's notifications, including the actor username, thread title and reply preview.
+* **View Reply** navigates directly to the relevant reply using its post ID anchor.
+* Users can mark one notification as read, mark all notifications as read, or delete individual notifications.
+* All notification actions use POST requests with CSRF protection. Database queries restrict access to the logged-in user's own notifications.
+* Deleting a user or related post automatically cleans up associated notifications through foreign key constraints.
+
+
 ### 5.1 System Architecture & Request Flow
 
 This diagram shows how a browser request moves through the root PHP controllers, the shared `config/` + `includes/` foundation, and the MySQL/upload storage layer.
@@ -450,7 +513,7 @@ flowchart TB
 
 ### C. Database Architect (1 Member — `schema.sql`, `seed.sql`, SQL Queries)
 
-* **Know how to explain:** Primary vs. Foreign Keys across the 4 tables (see the ER diagram in §3.3), the self-referencing Foreign Key in `posts` (`parent_id` pointing to `posts.id`), how `ON DELETE CASCADE` cleans up replies and bookmarks automatically, why reports are a boolean flag (`posts.is_reported`) instead of a fifth table, and `JOIN` queries between `posts` and `users`.
+* **Know how to explain:** Primary vs. Foreign Keys across the 5 tables (see the ER diagram in §3.3), the self-referencing Foreign Key in `posts` (`parent_id` pointing to `posts.id`), how `ON DELETE CASCADE` cleans up replies and bookmarks automatically, how notifications are stored in the notifications table and reports are tracked using the posts.is_reported boolean flag, and `JOIN` queries between `posts` and `users`.
 * **Practice live changes:** Running `GROUP BY` queries in phpMyAdmin to count posts per user, or adding a `views` column to `posts`.
 
 ---
